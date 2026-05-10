@@ -1,0 +1,70 @@
+---
+import MobileMenu from './MobileMenu.astro';
+
+const navLinks = [
+  { name: 'Accueil', href: '/' },
+  { name: 'Boissons', href: '/drinks' },
+  { name: 'Recettes', href: '/recipes' },
+  { name: 'Blog', href: '/blog' },
+  { name: 'À propos', href: '/about' },
+  { name: 'Contact', href: '/contact' },
+];
+---
+
+<header class="w-full bg-gradient-to-r from-[#F4FEE9] via-[#CDFFC7] to-[#91FFF9]">
+
+  <div class="w-full px-4 md:px-10 lg:px-16 h-[60px] md:h-[70px] flex items-center justify-between">
+
+    <!-- LEFT -->
+    <div class="flex items-center gap-3">
+
+      <img src="/logo.svg" class="w-8 h-8 md:w-10 md:h-10" />
+
+      <span class="text-[#410B2B] font-bold text-[18px] md:text-[20px]">
+        Cuptail
+      </span>
+
+    </div>
+
+    <!-- DESKTOP NAV -->
+    <nav class="hidden lg:flex items-center gap-8">
+
+      {
+        navLinks.map(link => (
+          <a
+            href={link.href}
+            class="text-[#410B2B] font-medium text-[15px] hover:opacity-70 transition"
+          >
+            {link.name}
+          </a>
+        ))
+      }
+
+    </nav>
+
+    <!-- RIGHT -->
+    <div class="flex items-center gap-4">
+
+      <!-- ACCOUNT -->
+      <img
+        src="/account.svg"
+        class="hidden lg:block w-10 h-10 rounded-full object-cover"
+      />
+
+      <!-- BURGER -->
+      <button
+        id="open-menu"
+        class="lg:hidden flex flex-col gap-[5px]"
+      >
+        <span class="w-[26px] h-[3px] bg-[#410B2B] rounded"></span>
+        <span class="w-[26px] h-[3px] bg-[#410B2B] rounded"></span>
+        <span class="w-[26px] h-[3px] bg-[#410B2B] rounded"></span>
+      </button>
+
+    </div>
+
+  </div>
+
+</header>
+
+<MobileMenu />

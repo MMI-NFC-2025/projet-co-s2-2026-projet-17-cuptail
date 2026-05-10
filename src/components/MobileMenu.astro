@@ -1,0 +1,152 @@
+---
+const isLoggedIn = true;
+
+const primaryLinks = [
+  { name: 'Boissons', href: '/drinks', icon: '/drink.svg' },
+  { name: 'Recettes', href: '/recipes', icon: '/recipe.svg' },
+];
+
+const secondaryLinks = [
+  { name: 'Accueil', href: '/' },
+  { name: 'À propos', href: '/about' },
+  { name: 'Blog', href: '/blog' },
+  { name: 'Contact', href: '/contact' },
+];
+
+const accountLinks = [
+  { name: 'Favoris', href: '/favorites', icon: '/heart.svg' },
+  { name: 'Historique', href: '/history', icon: '/history.svg' },
+];
+---
+
+<!-- MENU -->
+<div
+  id="mobile-menu"
+  class="fixed inset-0 z-50 bg-[#00E9DD] translate-x-full transition-transform duration-300 lg:hidden"
+>
+  <div class="h-full flex flex-col px-7 pt-9 pb-8">
+
+    <!-- TOP -->
+    <div class="flex justify-between items-start">
+
+      <div class="ml-auto text-right">
+
+        {
+          isLoggedIn ? (
+            <>
+              <p class="text-white text-[20px] font-bold">
+                Username
+              </p>
+
+              <p class="text-sm text-white/80">
+                email@mail.com
+              </p>
+            </>
+          ) : (
+            <button class="text-white text-[20px] font-bold">
+              Se connecter
+            </button>
+          )
+        }
+
+      </div>
+
+      {
+        isLoggedIn && (
+          <img
+            src="/account.svg"
+            class="w-12 h-12 rounded-full ml-4 object-cover"
+          />
+        )
+      }
+
+    </div>
+
+    <!-- LINE -->
+    <div class="w-full h-[1px] bg-white/50 mt-6"></div>
+
+    <!-- CLOSE -->
+    <div class="flex justify-end mt-5">
+      <button id="close-menu">
+        <img src="/close.svg" class="w-8 h-8" />
+      </button>
+    </div>
+
+    <!-- LINKS -->
+    <div class="mt-8 flex flex-col gap-5">
+
+      <!-- PRIMARY -->
+      {
+        primaryLinks.map(link => (
+          <a href={link.href} class="flex items-center gap-3 active:scale-95 transition">
+
+            <div class="w-[21px] h-[21px] rounded-md bg-white flex items-center justify-center shrink-0">
+              <img src={link.icon} class="w-[14px] h-[14px]" />
+            </div>
+
+            <span class="text-black text-[20px] font-bold">
+              {link.name}
+            </span>
+
+          </a>
+        ))
+      }
+
+      <div class="w-full h-[1px] bg-white/50"></div>
+
+      <!-- SECONDARY -->
+      {
+        secondaryLinks.map(link => (
+          <a href={link.href} class="pl-[34px] text-black text-[20px] font-bold active:scale-95 transition">
+            {link.name}
+          </a>
+        ))
+      }
+
+      <div class="w-full h-[1px] bg-white/50"></div>
+
+      <!-- ACCOUNT -->
+      {
+        isLoggedIn &&
+        accountLinks.map(link => (
+          <a href={link.href} class="flex items-center gap-3 active:scale-95 transition">
+
+            <div class="w-[21px] h-[21px] rounded-md bg-white flex items-center justify-center shrink-0">
+              <img src={link.icon} class="w-[14px] h-[14px]" />
+            </div>
+
+            <span class="text-black text-[20px] font-bold">
+              {link.name}
+            </span>
+
+          </a>
+        ))
+      }
+
+    </div>
+
+    <!-- LOGOUT -->
+    {
+      isLoggedIn && (
+        <button class="mt-auto text-white text-[20px] font-bold text-center">
+          Log out
+        </button>
+      )
+    }
+
+  </div>
+</div>
+
+<script>
+  const menu = document.getElementById('mobile-menu');
+  const openBtn = document.getElementById('open-menu');
+  const closeBtn = document.getElementById('close-menu');
+
+  openBtn?.addEventListener('click', () => {
+    menu?.classList.remove('translate-x-full');
+  });
+
+  closeBtn?.addEventListener('click', () => {
+    menu?.classList.add('translate-x-full');
+  });
+</script>
