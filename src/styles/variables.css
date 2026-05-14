@@ -1,0 +1,31 @@
+:root {
+  /* Brand colors */
+  --color-turquoise: #3ceedf;
+  --color-turquoise-dark: #35c2ba;
+  --color-green: #6eed62;
+  --color-green-soft: #c3ffad;
+  --color-red: #ff4d50;
+  --color-warm-gray: #666666;
+
+  /* Useful backgrounds */
+  --color-section-mint: #defdf8;
+  --color-pale-gray: #f9f9f9;
+  --color-tea-green: #e4f9df;
+
+  /* Gradients */
+  --gradient-spring: linear-gradient(91deg, #f4fee9 12.88%, #cdffc7 36.22%, #91fff9 84.51%);
+  --gradient-hero: linear-gradient(32deg, #fdfdf4 44.29%, #cbfaf8 75.01%, #a4e8f5 93.29%);
+  --gradient-sea-breeze: linear-gradient(180deg, #e0fdf9 0%, #d0fff4 100%);
+  --gradient-cotton-candy: linear-gradient(180deg, #fff5f5 0%, #ffe5e5 100%);
+  --gradient-lavender: linear-gradient(180deg, #fff5ff 0%, #f0e5ff 100%);
+  --gradient-quiz: linear-gradient(90deg, #e6fbf9 2.41%, #ecfdf7 23.16%, #fbfdfd 45.75%, #d8fbfb 98.32%);
+  --gradient-card: linear-gradient(164deg, #ffffff 28.3%, #edffe8 58.94%);
+  --gradient-mint: linear-gradient(156deg, #f0fff4 9.03%, #e4f9de 60.34%, #e0fdf9 94.54%);
+
+  /* Shadows */
+  --shadow-soft: 0 2px 4px rgba(0, 0, 0, 0.10);
+  --shadow-button: 0 2px 4px rgba(0, 0, 0, 0.11);
+  --shadow-card: 0 0 8px rgba(0, 0, 0, 0.15);
+  --shadow-strong-button: 0 4px 4px rgba(0, 0, 0, 0.25);
+  --shadow-panel: 0 10px 15px rgba(0, 0, 0, 0.10);
+}

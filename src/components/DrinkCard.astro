@@ -1,0 +1,98 @@
+---
+import { getFileUrl } from '../backend/backend.js';
+
+const { boisson } = Astro.props;
+
+const imageUrl =
+  Array.isArray(boisson.photo_boisson) && boisson.photo_boisson.length > 0
+    ? getFileUrl(boisson, boisson.photo_boisson[0])
+    : boisson.photo_boisson
+      ? getFileUrl(boisson, boisson.photo_boisson)
+      : '/images/placeholder-drink.png';
+
+const categoryName =
+  boisson.expand?.categories?.nom_categorie ||
+  boisson.expand?.categories?.nom_categorie ||
+  boisson.categories?.nom_categorie ||
+  'Boisson';
+
+const description = boisson.description_courte || boisson.description_boisson || '';
+const shortDescription =
+  description.length > 52 ? `${description.slice(0, 52)}...` : description;
+
+const categoryColors = {
+  Thé: 'bg-[#6EED62]',
+  Thés: 'bg-[#6EED62]',
+  Infusions: 'bg-[#F5C65C]',
+  'Cocktails sans alcool': 'bg-[#FF4D50]',
+  Cocktails: 'bg-[#FF4D50]',
+  Smoothies: 'bg-[#9278F4]',
+  Café: 'bg-[#A58A7D]',
+  Protéines: 'bg-[#FF7C55]',
+  'Boissons protéinées': 'bg-[#FF7C55]',
+  Végétales: 'bg-[#A9C989]',
+  'Boissons végétales': 'bg-[#A9C989]',
+  Fermentées: 'bg-[#7BE5D7]',
+  'Boissons fermentées': 'bg-[#7BE5D7]',
+} as Record<string, string>;
+
+const categoryColor = categoryColors[categoryName] || 'bg-brand-green';
+---
+
+<article
+  class="relative h-[262px] w-[156px] shrink-0 overflow-hidden rounded-2xl bg-card shadow-panel transition duration-200 hover:-translate-y-1 hover:shadow-card md:h-[300px] md:w-[178px]"
+>
+  <!-- Top image area -->
+  <div class="relative h-[146px] md:h-[168px]">
+    <span
+      class={`absolute left-[14px] top-[8px] z-10 min-w-[45px] rounded-full px-3 py-1 text-center text-[9px] font-bold leading-[13.5px] text-white md:text-[10px] ${categoryColor}`}
+    >
+      {categoryName}
+    </span>
+
+    <button
+      class="absolute right-[14px] top-[8px] z-10 grid h-[21px] w-[21px] place-items-center rounded-full bg-white shadow-soft transition hover:scale-110 md:h-6 md:w-6"
+      type="button"
+      aria-label="Ajouter aux favoris"
+    >
+      <img
+        class="h-[9px] w-[10px] md:h-[10px] md:w-[11px]"
+        src="/icons/heart.svg"
+        alt=""
+      />
+    </button>
+
+    <img
+      class="absolute left-1/2 top-[14px] h-[132px] w-[146px] -translate-x-1/2 object-contain md:h-[152px] md:w-[168px]"
+      src={imageUrl}
+      alt={boisson.nom_boisson}
+      loading="lazy"
+    />
+  </div>
+
+  <!-- Text area -->
+  <div class="absolute bottom-0 left-0 h-[116px] w-full rounded-b-2xl bg-white px-[15px] pb-3 pt-[13px] md:h-[132px] md:px-[18px] md:pt-4">
+    <h3 class="line-clamp-1 text-[13px] font-bold leading-[16.25px] text-black md:text-[15px] md:leading-5">
+      {boisson.nom_boisson}
+    </h3>
+
+    <p class="mt-1.5 line-clamp-2 text-[11px] font-normal leading-[16.25px] text-brand-warmGray md:text-[13px] md:leading-[19px]">
+      {shortDescription}
+    </p>
+
+    <a
+      class="mt-[9px] flex items-center justify-between text-[12px] font-bold text-brand-turquoise no-underline md:text-[14px]"
+      href={`/boissons/${boisson.slug}`}
+    >
+      <span>Voir la recette</span>
+
+      <span class="grid h-6 w-6 place-items-center rounded-full bg-white shadow-soft md:h-7 md:w-7">
+        <img
+          class="h-[13px] w-[9px]"
+          src="/icons/arrow-right.svg"
+          alt=""
+        />
+      </span>
+    </a>
+  </div>
+</article>

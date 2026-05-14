@@ -1,10 +1,177 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
-import RecipesSection from '../components/RecipesSection.astro';
+import WeatherClient from '../components/WeatherClient.astro';
+import DrinkCard from '../components/DrinkCard.astro';
+
+import { getBoissons, getCategories, getFileUrl } from '../backend/backend.js';
+
+const boissons = await getBoissons();
+const categories = await getCategories();
+
+const popularCategories = categories.slice(0, 3);
+const nouveautes = boissons.filter((boisson) => boisson.is_new).slice(0, 6);
 ---
 
-<Layout>
+<Layout title="Accueil">
   <Hero />
-  <RecipesSection />
+
+  <WeatherClient />
+
+  <section class="bg-white px-4 py-8">
+    <div class="mx-auto max-w-5xl">
+      <h2 class="mb-4 text-[16px] font-bold text-black">Tu préfères autre chose ?</h2>
+
+      <div class="flex gap-3 overflow-x-auto pb-2">
+        <a class="min-w-[105px] rounded-xl bg-seaBreeze p-3 text-center shadow-soft" href="/boissons?temperature=froid">
+          <img class="mx-auto h-10 w-10 object-contain" src="/icons/weather/ice.svg" alt="" />
+          <p class="mt-1 text-[13px] font-bold text-black">Froid</p>
+          <p class="text-[9px] font-bold text-neutral-400">Boissons fraîches</p>
+        </a>
+
+        <a class="min-w-[105px] rounded-xl bg-cottonCandy p-3 text-center shadow-soft" href="/boissons?temperature=chaud">
+          <img class="mx-auto h-10 w-10 object-contain" src="/icons/weather/hot.svg" alt="" />
+          <p class="mt-1 text-[13px] font-bold text-black">Chaud</p>
+          <p class="text-[9px] font-bold text-neutral-400">Boissons chaudes</p>
+        </a>
+
+        <a class="min-w-[105px] rounded-xl bg-lavender p-3 text-center shadow-soft" href="/boissons?weather=pluie">
+          <img class="mx-auto h-10 w-10 object-contain" src="/icons/weather/personalis.svg" alt="" />
+          <p class="mt-1 text-[13px] font-bold text-black">Pluie</p>
+          <p class="text-[9px] font-bold text-neutral-400">Réconfortantes</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-white px-4 pb-8">
+    <div class="mx-auto max-w-5xl">
+      <div class="mb-4 flex items-center justify-between">
+        <h2 class="section-title-sm">Catégories populaires</h2>
+        <a href="/boissons" class="text-[12px] font-bold text-brand-turquoise">Voir tout</a>
+      </div>
+
+      <div class="grid grid-cols-3 gap-3">
+        {popularCategories.map((categorie) => (
+          <a href={`/boissons?categorie=${categorie.slug}`} class="overflow-hidden rounded-xl bg-white shadow-card">
+            <img
+              class="h-[82px] w-full object-cover"
+              src={getFileUrl(categorie, categorie.image_categorie)}
+              alt={categorie.nom_categorie}
+            />
+            <div class="p-2 text-center">
+              <h3 class="text-[12px] font-bold leading-[14px] text-black">{categorie.nom_categorie}</h3>
+              <p class="text-[9px] font-bold text-neutral-400">5 recettes</p>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-white px-4 pb-8">
+    <div class="mx-auto max-w-5xl">
+      <div class="rounded-[24px] bg-mint p-6 text-center shadow-soft">
+        <h2 class="text-[18px] font-bold leading-6 text-black">
+          Envie d’une boisson qui te correspond vraiment ?
+        </h2>
+
+        <p class="mx-auto mt-3 max-w-[260px] text-[13px] leading-[19.5px] text-neutral-500">
+          Réponds à 3 questions et découvre une sélection personnalisée.
+        </p>
+
+        <a
+          href="/quiz"
+          class="mt-5 inline-flex items-center gap-3 rounded-full bg-brand-turquoise px-8 py-3 text-[14px] font-bold text-black shadow-button"
+        >
+          Commencer
+          <span>›</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-white px-4 pb-10">
+    <div class="mx-auto max-w-5xl">
+      <h2 class="section-title-sm mb-4">Explorer les recettes</h2>
+
+      <div class="rounded-[24px] bg-cottonCandy p-4 text-center shadow-soft">
+        <img
+          class="mx-auto w-full max-w-[340px] rounded-[18px] object-cover"
+          src="/recipes-cover.png"
+          alt="Recettes de boissons"
+        />
+
+        <a
+          href="/boissons"
+          class="mt-4 inline-flex rounded-full bg-brand-turquoise px-8 py-3 text-[14px] font-bold text-black shadow-button"
+        >
+          Découvrir
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-white px-4 pb-12">
+    <div class="mx-auto max-w-5xl">
+      <h2 class="section-title-sm mb-4">Nouveautés</h2>
+
+      <div class="flex gap-4 overflow-x-auto pb-4">
+        {(nouveautes.length ? nouveautes : boissons.slice(0, 6)).map((boisson) => (
+          <div class="min-w-[156px]">
+            <DrinkCard boisson={boisson} />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-white px-4 pb-12">
+    <div class="mx-auto max-w-5xl">
+      <div class="mb-4 flex items-center justify-between">
+        <h2 class="section-title-sm">Articles & conseils</h2>
+        <a href="/blog" class="text-[12px] font-bold text-brand-turquoise">Voir tout</a>
+      </div>
+
+      <article class="overflow-hidden rounded-[24px] bg-white shadow-card">
+        <img class="h-[190px] w-full object-cover" src="/images/blog-fruits-rouges.png" alt="" />
+
+        <div class="p-5">
+          <div class="mb-3 flex items-center justify-between text-[10px] text-neutral-400">
+            <span>06/02/2026</span>
+            <span>3–4 minutes</span>
+          </div>
+
+          <h3 class="text-[18px] font-bold leading-6 text-brand-red">
+            Pourquoi les fruits rouges fascinent les scientifiques
+          </h3>
+
+          <p class="mt-3 text-[13px] leading-[19.5px] text-black">
+            Riches en antioxydants, les fruits rouges sont devenus incontournables dans les boissons fonctionnelles.
+          </p>
+
+          <a href="/blog" class="mt-4 inline-flex rounded-full bg-brand-greenSoft px-5 py-2 text-[12px] font-bold text-brand-turquoiseDark">
+            En savoir plus
+          </a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="bg-white px-4 pb-16">
+    <div class="mx-auto max-w-5xl text-center">
+      <h2 class="mb-8 text-[22px] font-bold text-[#5A1845]">Nos partenaires</h2>
+
+      <div class="flex items-center justify-center gap-10">
+        <button class="grid h-8 w-8 place-items-center rounded-full bg-white shadow-soft">‹</button>
+
+        <div>
+          <img class="mx-auto h-20 w-20 rounded-full border-4 border-brand-turquoise object-cover" src="/images/partner-la-felicita.png" alt="" />
+          <p class="mt-3 text-[12px] font-bold text-black">La Félicita</p>
+        </div>
+
+        <button class="grid h-8 w-8 place-items-center rounded-full bg-white shadow-soft">›</button>
+      </div>
+    </div>
+  </section>
 </Layout>

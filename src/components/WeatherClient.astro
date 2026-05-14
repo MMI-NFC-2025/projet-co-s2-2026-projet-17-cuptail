@@ -1,0 +1,333 @@
+<section id="weather-section" class="mx-auto w-full max-w-[393px] px-4 py-6">
+  <div class="rounded-[32px] bg-gradient-to-b from-cyan-100 to-[#F7FFF4] p-6 shadow-lg">
+    <button id="city-button" class="mb-4 text-sm font-bold text-black">
+      📍 <span id="weather-city">Montbéliard</span>
+    </button>
+
+    <div class="flex items-start justify-between">
+      <div>
+        <p id="weather-temp" class="text-[42px] font-black leading-none text-black">--°C</p>
+        <p id="weather-label" class="mt-2 text-xl font-bold text-black">Chargement...</p>
+        <p id="weather-message" class="mt-3 text-base font-bold text-neutral-400">
+          On cherche la meilleure boisson...
+        </p>
+      </div>
+
+      <img id="weather-icon" class="h-14 w-14" src="/icons/weather/sun.svg" alt="" />
+    </div>
+
+    <div id="weather-recommendations" class="mt-8 flex gap-4 overflow-x-auto pb-3 snap-x snap-mandatory">
+      <p class="text-sm font-bold text-neutral-500">Chargement des recommandations...</p>
+    </div>
+  </div>
+
+  <div id="location-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 px-5">
+    <div class="w-full max-w-[340px] rounded-[28px] bg-white p-6 shadow-xl">
+      <h2 class="text-xl font-black text-black">Utiliser ta position ?</h2>
+
+      <p class="mt-3 text-sm leading-6 text-neutral-500">
+        On utilise ta localisation seulement pour proposer une boisson adaptée à la météo.
+      </p>
+
+      <div class="mt-5 flex flex-col gap-3">
+        <button id="allow-location" class="rounded-full bg-[var(--turquoise-brand)] px-5 py-3 text-sm font-black text-black">
+          Utiliser ma position
+        </button>
+
+        <button id="deny-location" class="rounded-full bg-neutral-100 px-5 py-3 text-sm font-bold text-black">
+          Continuer avec Montbéliard
+        </button>
+      </div>
+
+      <div class="mt-5">
+        <label for="city-input" class="text-xs font-bold text-neutral-500">
+          Ou choisis une ville
+        </label>
+
+        <div class="mt-2 flex gap-2">
+          <input
+            id="city-input"
+            class="min-w-0 flex-1 rounded-full border border-neutral-200 px-4 py-2 text-sm outline-none"
+            type="text"
+            placeholder="Paris, Lyon..."
+          />
+
+          <button id="search-city" class="rounded-full bg-black px-4 py-2 text-sm font-bold text-white">
+            OK
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  const DEFAULT_LOCATION = {
+    city: 'Montbéliard',
+    latitude: 47.5102,
+    longitude: 6.7981,
+  };
+
+  const STORAGE_KEY = 'cuptail_location_choice';
+
+  const cityButton = document.querySelector('#city-button');
+  const modal = document.querySelector('#location-modal');
+  const allowButton = document.querySelector('#allow-location');
+  const denyButton = document.querySelector('#deny-location');
+  const searchCityButton = document.querySelector('#search-city');
+  const cityInput = document.querySelector('#city-input');
+
+  const cityEl = document.querySelector('#weather-city');
+  const tempEl = document.querySelector('#weather-temp');
+  const labelEl = document.querySelector('#weather-label');
+  const messageEl = document.querySelector('#weather-message');
+  const iconEl = document.querySelector('#weather-icon');
+  const recommendationsEl = document.querySelector('#weather-recommendations');
+
+  function openModal() {
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  function closeModal() {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+
+  function saveLocation(location) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(location));
+  }
+
+  function getSavedLocation() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved) : null;
+  }
+
+  function getWeatherContext(weather) {
+    const temperature = weather.temperature_2m;
+    const precipitation = weather.precipitation;
+    const rain = weather.rain;
+    const code = weather.weather_code;
+    const wind = weather.wind_speed_10m;
+
+    if (precipitation > 0 || rain > 0 || [51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code)) return 'pluie';
+    if (wind >= 35) return 'vent';
+    if (temperature >= 24) return 'chaud';
+    if (temperature <= 10) return 'froid';
+    if ([0, 1].includes(code)) return 'soleil';
+    if ([2, 3, 45, 48].includes(code)) return 'nuageux';
+
+    return 'normal';
+  }
+
+  function getWeatherLabel(context) {
+    const labels = {
+      chaud: 'Chaud',
+      froid: 'Froid',
+      pluie: 'Pluvieux',
+      soleil: 'Ensoleillé',
+      nuageux: 'Nuageux',
+      normal: 'Doux',
+      vent: 'Venteux',
+    };
+
+    return labels[context] || 'Doux';
+  }
+
+  function getWeatherMessage(context) {
+    const messages = {
+      chaud: 'Parfait pour une boisson fraîche !',
+      soleil: 'Parfait pour une boisson fraîche !',
+      froid: 'Parfait pour une boisson chaude !',
+      pluie: 'Une boisson réconfortante serait parfaite.',
+      nuageux: 'Une boisson douce pour une météo calme.',
+      vent: 'Une boisson énergisante pour tenir le rythme.',
+      normal: 'Une boisson simple pour aujourd’hui.',
+    };
+
+    return messages[context] || messages.normal;
+  }
+
+  function getWeatherIcon(context) {
+    const icons = {
+      chaud: '/icons/weather/sun.svg',
+      soleil: '/icons/weather/sun.svg',
+      froid: '/icons/weather/cold.svg',
+      pluie: '/icons/weather/rain.svg',
+      nuageux: '/icons/weather/cloud.svg',
+      vent: '/icons/weather/wind.svg',
+      normal: '/icons/weather/sun.svg',
+    };
+
+    return icons[context] || icons.normal;
+  }
+
+  async function getWeather(location) {
+    const url = new URL('https://api.open-meteo.com/v1/forecast');
+
+    url.searchParams.set('latitude', location.latitude);
+    url.searchParams.set('longitude', location.longitude);
+    url.searchParams.set('current', 'temperature_2m,precipitation,rain,weather_code,wind_speed_10m,is_day');
+    url.searchParams.set('timezone', 'auto');
+
+    const response = await fetch(url);
+    const data = await response.json();
+
+    return data.current;
+  }
+
+  async function getCityCoords(cityName) {
+    const url = new URL('https://geocoding-api.open-meteo.com/v1/search');
+
+    url.searchParams.set('name', cityName);
+    url.searchParams.set('count', '1');
+    url.searchParams.set('language', 'fr');
+    url.searchParams.set('format', 'json');
+
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (!data.results || data.results.length === 0) {
+      throw new Error('Ville introuvable');
+    }
+
+    const city = data.results[0];
+
+    return {
+      city: city.name,
+      latitude: city.latitude,
+      longitude: city.longitude,
+    };
+  }
+
+  async function getRecommendedBoissons(context) {
+    const response = await fetch(`https://api.ruslanabudniak.fr/api/collections/boissons/records?filter=(is_active=true%20%26%26%20weather_context~%22${context}%22)&expand=categorie`);
+    const data = await response.json();
+
+    return data.items || [];
+  }
+
+  function renderBoissons(boissons) {
+    if (!boissons.length) {
+      recommendationsEl.innerHTML = '<p class="text-sm font-bold text-neutral-500">Aucune boisson trouvée pour cette météo.</p>';
+      return;
+    }
+
+    recommendationsEl.innerHTML = boissons.slice(0, 5).map((boisson) => {
+      const fileName = Array.isArray(boisson.photo_boisson) ? boisson.photo_boisson[0] : boisson.photo_boisson;
+      const imageUrl = fileName
+        ? `https://api.ruslanabudniak.fr/api/files/${boisson.collectionId}/${boisson.id}/${fileName}`
+        : '/images/placeholder-drink.png';
+
+      const category = boisson.expand?.categorie?.nom_categorie || 'Boisson';
+
+      return `
+        <article class="min-w-[260px] snap-center rounded-3xl bg-white p-5 shadow-lg">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <p class="text-sm font-bold text-black">☀️ Notre recommandation</p>
+              <h3 class="mt-4 text-2xl font-black text-black">${boisson.nom_boisson}</h3>
+              <p class="mt-3 text-sm font-bold text-neutral-400">${boisson.description_courte || ''}</p>
+            </div>
+
+            <img class="h-[120px] w-[90px] object-contain" src="${imageUrl}" alt="${boisson.nom_boisson}" />
+          </div>
+
+          <div class="mt-4 flex items-center justify-between">
+            <a href="/boissons/${boisson.slug}" class="rounded-full bg-[var(--turquoise-brand)] px-6 py-3 text-sm font-black text-black">
+              Voir la recette
+            </a>
+
+            <div class="rounded-2xl bg-white p-3 text-xs font-bold shadow">
+              <p>${boisson.temps_preparation || 5} min</p>
+              <p>${boisson.difficulte || 'Facile'}</p>
+              <p>${boisson.is_vegan ? 'Vegan' : 'Non vegan'}</p>
+            </div>
+          </div>
+        </article>
+      `;
+    }).join('');
+  }
+
+  async function updateWeatherSection(location) {
+    cityEl.textContent = location.city;
+
+    const weather = await getWeather(location);
+    const context = getWeatherContext(weather);
+    const boissons = await getRecommendedBoissons(context);
+
+    tempEl.textContent = `${Math.round(weather.temperature_2m)}°C`;
+    labelEl.textContent = getWeatherLabel(context);
+    messageEl.textContent = getWeatherMessage(context);
+    iconEl.src = getWeatherIcon(context);
+
+    renderBoissons(boissons);
+  }
+
+  function askBrowserLocation() {
+    if (!navigator.geolocation) {
+      updateWeatherSection(DEFAULT_LOCATION);
+      saveLocation(DEFAULT_LOCATION);
+      closeModal();
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const location = {
+          city: 'Ma position',
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        };
+
+        saveLocation(location);
+        closeModal();
+        await updateWeatherSection(location);
+      },
+      async () => {
+        saveLocation(DEFAULT_LOCATION);
+        closeModal();
+        await updateWeatherSection(DEFAULT_LOCATION);
+      },
+      {
+        enableHighAccuracy: false,
+        timeout: 7000,
+        maximumAge: 600000,
+      }
+    );
+  }
+
+  allowButton.addEventListener('click', askBrowserLocation);
+
+  denyButton.addEventListener('click', async () => {
+    saveLocation(DEFAULT_LOCATION);
+    closeModal();
+    await updateWeatherSection(DEFAULT_LOCATION);
+  });
+
+  searchCityButton.addEventListener('click', async () => {
+    const cityName = cityInput.value.trim();
+
+    if (!cityName) return;
+
+    try {
+      const location = await getCityCoords(cityName);
+      saveLocation(location);
+      closeModal();
+      await updateWeatherSection(location);
+    } catch (error) {
+      alert('Ville introuvable. Essaie une autre ville.');
+    }
+  });
+
+  cityButton.addEventListener('click', openModal);
+
+  const savedLocation = getSavedLocation();
+
+  if (savedLocation) {
+    updateWeatherSection(savedLocation);
+  } else {
+    openModal();
+    updateWeatherSection(DEFAULT_LOCATION);
+  }
+</script>

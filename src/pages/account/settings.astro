@@ -1,0 +1,121 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Paramètres du compte">
+  <section class="min-h-[calc(100vh-64px)] bg-brand-paleGray px-4 py-8">
+    <div class="mx-auto max-w-[620px]">
+      <a href="/account" class="nav-link-brand">← Retour</a>
+
+      <h1 class="page-title mt-4">Paramètres</h1>
+      <p class="page-subtitle mt-2">Gérer les informations et la sécurité du compte.</p>
+
+      <div id="settings-content" class="mt-8"></div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  import { getCurrentUser, logoutUser, deleteUserAccount } from '../../backend/backend.js';
+
+  const container = document.querySelector('#settings-content');
+
+  if (container) {
+    const user = getCurrentUser();
+
+    if (!user) {
+      container.innerHTML = `
+        <div class="rounded-[28px] bg-white p-6 text-center shadow-card">
+          <h2 class="text-xl font-bold">Tu n’es pas connecté</h2>
+          <a href="/login" class="mt-6 inline-block rounded-full bg-brand-turquoise px-6 py-3 font-bold text-black shadow-button">
+            Se connecter
+          </a>
+        </div>
+      `;
+    } else {
+      const createdDate = user.created
+        ? new Date(user.created).toLocaleDateString('fr-FR')
+        : 'Non disponible';
+
+      const updatedDate = user.updated
+        ? new Date(user.updated).toLocaleDateString('fr-FR')
+        : 'Non disponible';
+
+      container.innerHTML = `
+        <div class="overflow-hidden rounded-[24px] bg-white shadow-soft">
+          <h2 class="border-b border-neutral-100 p-5 text-lg font-bold">Informations du compte</h2>
+
+          <div class="space-y-4 p-5">
+            <div>
+              <p class="text-sm font-bold text-neutral-400">Nom</p>
+              <p class="mt-1 font-bold text-black">${user.name || 'Non renseigné'}</p>
+            </div>
+
+            <div>
+              <p class="text-sm font-bold text-neutral-400">Email</p>
+              <p class="mt-1 font-bold text-black">${user.email}</p>
+            </div>
+
+            <div>
+              <p class="text-sm font-bold text-neutral-400">Compte créé le</p>
+              <p class="mt-1 font-bold text-black">${createdDate}</p>
+            </div>
+
+            <div>
+              <p class="text-sm font-bold text-neutral-400">Dernière modification</p>
+              <p class="mt-1 font-bold text-black">${updatedDate}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 overflow-hidden rounded-[24px] bg-white shadow-soft">
+          <h2 class="border-b border-neutral-100 p-5 text-lg font-bold">Actions</h2>
+
+          <a href="/account/edit" class="flex items-center justify-between border-b border-neutral-100 p-5 font-bold">
+            Modifier le profil
+            <span class="text-brand-turquoise">›</span>
+          </a>
+
+          <button id="logout-button" class="flex w-full items-center justify-between border-b border-neutral-100 p-5 text-left font-bold">
+            Se déconnecter
+            <span class="text-neutral-400">›</span>
+          </button>
+
+          <button id="delete-button" class="flex w-full items-center justify-between p-5 text-left font-bold text-brand-red">
+            Supprimer mon compte
+            <span>›</span>
+          </button>
+        </div>
+
+        <div class="mt-6 rounded-[24px] bg-seaBreeze p-5 shadow-soft">
+          <h2 class="text-lg font-bold text-black">Confidentialité</h2>
+          <p class="mt-2 text-sm leading-6 text-neutral-600">
+            Les données du compte servent uniquement à gérer le profil, les favoris et l’historique de recettes.
+          </p>
+        </div>
+      `;
+
+      const logoutButton = document.querySelector('#logout-button');
+      const deleteButton = document.querySelector('#delete-button');
+
+      if (logoutButton instanceof HTMLButtonElement) {
+        logoutButton.addEventListener('click', () => {
+          logoutUser();
+          window.location.href = '/login';
+        });
+      }
+
+      if (deleteButton instanceof HTMLButtonElement) {
+        deleteButton.addEventListener('click', async () => {
+          const confirmDelete = confirm('Supprimer définitivement ton compte ? Cette action est irréversible.');
+
+          if (!confirmDelete) return;
+
+          await deleteUserAccount(user.id);
+          logoutUser();
+          window.location.href = '/register';
+        });
+      }
+    }
+  }
+</script>

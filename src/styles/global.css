@@ -1,9 +1,84 @@
+@import './variables.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+html {
+  background: #ffffff;
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
-  font-family: sans-serif;
   overflow-x: hidden;
+  background: #ffffff;
+  font-family: "Google Sans", "Google Sans Text", Inter, Arial, sans-serif;
+  color: #000000;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+
+
+
+@layer utilities {
+  @keyframes float-drop-1 {
+    0% {
+      transform: translate3d(0, -120px, 0) rotate(0deg);
+      opacity: 0;
+    }
+    18% {
+      opacity: 0.45;
+    }
+    100% {
+      transform: translate3d(24px, 110vh, 0) rotate(160deg);
+      opacity: 0.78;
+    }
+  }
+
+  @keyframes float-drop-2 {
+    0% {
+      transform: translate3d(0, -160px, 0) rotate(20deg);
+      opacity: 0;
+    }
+    20% {
+      opacity: 0.38;
+    }
+    100% {
+      transform: translate3d(-32px, 110vh, 0) rotate(-140deg);
+      opacity: 0.72;
+    }
+  }
+
+  @keyframes float-drop-3 {
+    0% {
+      transform: translate3d(0, -100px, 0) rotate(-15deg);
+      opacity: 0;
+    }
+    22% {
+      opacity: 0.42;
+    }
+    100% {
+      transform: translate3d(18px, 110vh, 0) rotate(120deg);
+      opacity: 0.75;
+    }
+  }
+
+  .animate-drop-1 {
+    animation: float-drop-1 14s linear infinite;
+  }
+
+  .animate-drop-2 {
+    animation: float-drop-2 18s linear infinite;
+  }
+
+  .animate-drop-3 {
+    animation: float-drop-3 16s linear infinite;
+  }
 }

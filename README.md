@@ -3,20 +3,20 @@
 
 Éléménts à renseigner pour la soutenance :
 
-- [ ] Nom du projet :
+- [ ] Nom du projet : Cielixir
 - [ ] URL de la landing page :
 - [ ] URL de l'application finale :
-- [ ] URL de connexion au back office :
-- [ ] Identifiant de connexion au backoffice :
-- [ ] Mot de passe de connexion au backoffice :
-- [ ] URL de la maquette FIGMA :
+- [ ] URL de connexion au back office : https://api.ruslanabudniak.fr/_/ 
+- [ ] Identifiant de connexion au backoffice : mamansambe47@gmail.com
+- [ ] Mot de passe de connexion au backoffice : Pocketbase@Cuptail
+- [ ] URL de la maquette FIGMA : https://www.figma.com/design/8X3cWZv9a4LTJKh9ZQLVIi/Cuptail?node-id=1097-2&t=poKEQbTT56idDJHd-1 
 - [ ] Description du projet :
 
 ## 🚀 Équipe
 
 | Étudiants    | Prénom NOM  |
 | :----------- | :---------- |
-| Étudiant 1   | à compléter |
+| Étudiant 1   | Ruslana BUDNIAK |
 | Étudiant 2   | à compléter |
 | Étudiant 3   | à compléter |
 | (Étudiant 4) | à compléter |
