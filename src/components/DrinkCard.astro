@@ -10,10 +10,15 @@ const imageUrl =
       ? getFileUrl(boisson, boisson.photo_boisson)
       : '/images/placeholder-drink.png';
 
+const expandedCategories = boisson.expand?.categories;
+
+const firstCategory = Array.isArray(expandedCategories)
+  ? expandedCategories[0]
+  : expandedCategories;
+
 const categoryName =
-  boisson.expand?.categories?.nom_categorie ||
-  boisson.expand?.categories?.nom_categorie ||
-  boisson.categories?.nom_categorie ||
+  firstCategory?.nom_categorie ||
+  firstCategory?.categories_boissons ||
   'Boisson';
 
 const description = boisson.description_courte || boisson.description_boisson || '';

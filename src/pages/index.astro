@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
 import WeatherClient from '../components/WeatherClient.astro';
 import DrinkCard from '../components/DrinkCard.astro';
+import QuizSection from '../components/QuizSection.astro';
 
 import { getBoissons, getCategories, getFileUrl } from '../backend/backend.js';
 
@@ -18,31 +19,42 @@ const nouveautes = boissons.filter((boisson) => boisson.is_new).slice(0, 6);
 
   <WeatherClient />
 
-  <section class="bg-white px-4 py-8">
-    <div class="mx-auto max-w-5xl">
-      <h2 class="mb-4 text-[16px] font-bold text-black">Tu préfères autre chose ?</h2>
+<section class="bg-white px-4 py-8 md:py-14">
+  <div class="mx-auto max-w-5xl">
+    <h2 class="mb-6 text-[20px] font-bold leading-9 text-black md:mb-10 md:text-[28px]">
+      Tu préfères autre chose ?
+    </h2>
 
-      <div class="flex gap-3 overflow-x-auto pb-2">
-        <a class="min-w-[105px] rounded-xl bg-seaBreeze p-3 text-center shadow-soft" href="/boissons?temperature=froid">
-          <img class="mx-auto h-10 w-10 object-contain" src="/icons/weather/ice.svg" alt="" />
-          <p class="mt-1 text-[13px] font-bold text-black">Froid</p>
-          <p class="text-[9px] font-bold text-neutral-400">Boissons fraîches</p>
-        </a>
+    <div class="flex gap-4 overflow-x-auto pb-4 md:grid md:grid-cols-3 md:gap-8 md:overflow-visible">
+      <a
+        class="min-w-[238px] rounded-[18px] border-4 border-white bg-seaBreeze p-4 text-center shadow-card transition hover:-translate-y-1 hover:scale-[1.02] md:min-w-0 md:p-6"
+        href="/boissons?temperature=froid"
+      >
+        <img class="mx-auto h-[58px] w-[80px] object-contain md:h-[76px] md:w-[110px]" src="/icons/weather/ice.svg" alt="" />
+        <p class="mt-2 text-[22px] font-bold leading-7 text-black md:text-[28px]">Froid</p>
+        <p class="mt-2 text-[16px] font-bold text-neutral-500 md:text-[20px]">Boissons fraîches</p>
+      </a>
 
-        <a class="min-w-[105px] rounded-xl bg-cottonCandy p-3 text-center shadow-soft" href="/boissons?temperature=chaud">
-          <img class="mx-auto h-10 w-10 object-contain" src="/icons/weather/hot.svg" alt="" />
-          <p class="mt-1 text-[13px] font-bold text-black">Chaud</p>
-          <p class="text-[9px] font-bold text-neutral-400">Boissons chaudes</p>
-        </a>
+      <a
+        class="min-w-[238px] rounded-[18px] border-4 border-white bg-cottonCandy p-4 text-center shadow-card transition hover:-translate-y-1 hover:scale-[1.02] md:min-w-0 md:p-6"
+        href="/boissons?temperature=chaud"
+      >
+        <img class="mx-auto h-[58px] w-[80px] object-contain md:h-[76px] md:w-[110px]" src="/icons/weather/hot.svg" alt="" />
+        <p class="mt-2 text-[22px] font-bold leading-7 text-black md:text-[28px]">Chaud</p>
+        <p class="mt-2 text-[16px] font-bold text-neutral-500 md:text-[20px]">Boissons chaudes</p>
+      </a>
 
-        <a class="min-w-[105px] rounded-xl bg-lavender p-3 text-center shadow-soft" href="/boissons?weather=pluie">
-          <img class="mx-auto h-10 w-10 object-contain" src="/icons/weather/personalis.svg" alt="" />
-          <p class="mt-1 text-[13px] font-bold text-black">Pluie</p>
-          <p class="text-[9px] font-bold text-neutral-400">Réconfortantes</p>
-        </a>
-      </div>
+      <a
+        class="min-w-[238px] rounded-[18px] border-4 border-white bg-lavender p-4 text-center shadow-card transition hover:-translate-y-1 hover:scale-[1.02] md:min-w-0 md:p-6"
+        href="#quiz-section"
+      >
+        <img class="mx-auto h-[58px] w-[80px] object-contain md:h-[76px] md:w-[110px]" src="/icons/weather/personalis.svg" alt="" />
+        <p class="mt-2 text-[22px] font-bold leading-7 text-black md:text-[28px]">Personnaliser</p>
+        <p class="mt-2 text-[16px] font-bold text-neutral-500 md:text-[20px]">Réponds à 3 questions</p>
+      </a>
     </div>
-  </section>
+  </div>
+</section>
 
   <section class="bg-white px-4 pb-8">
     <div class="mx-auto max-w-5xl">
@@ -69,27 +81,7 @@ const nouveautes = boissons.filter((boisson) => boisson.is_new).slice(0, 6);
     </div>
   </section>
 
-  <section class="bg-white px-4 pb-8">
-    <div class="mx-auto max-w-5xl">
-      <div class="rounded-[24px] bg-mint p-6 text-center shadow-soft">
-        <h2 class="text-[18px] font-bold leading-6 text-black">
-          Envie d’une boisson qui te correspond vraiment ?
-        </h2>
-
-        <p class="mx-auto mt-3 max-w-[260px] text-[13px] leading-[19.5px] text-neutral-500">
-          Réponds à 3 questions et découvre une sélection personnalisée.
-        </p>
-
-        <a
-          href="/quiz"
-          class="mt-5 inline-flex items-center gap-3 rounded-full bg-brand-turquoise px-8 py-3 text-[14px] font-bold text-black shadow-button"
-        >
-          Commencer
-          <span>›</span>
-        </a>
-      </div>
-    </div>
-  </section>
+<QuizSection />
 
   <section class="bg-white px-4 pb-10">
     <div class="mx-auto max-w-5xl">

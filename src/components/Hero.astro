@@ -1,26 +1,12 @@
-<section class="relative flex min-h-[calc(100vh-64px)] w-full items-center justify-center overflow-hidden bg-spring px-6 pt-16 pb-16">
-  <div
-  class="pointer-events-none absolute inset-0 z-0 overflow-hidden opacity-80 [mask-image:linear-gradient(to_bottom,transparent_0%,rgba(0,0,0,0.2)_14%,black_38%,black_100%)]"
-  aria-hidden="true"
->
-  <img src="/hero/blob-1.svg" alt="" class="animate-drop-1 absolute left-[4%] top-[-40px] w-16 select-none md:w-24" />
-  <img src="/hero/blob-2.svg" alt="" class="animate-drop-2 absolute left-[18%] top-[-120px] w-28 select-none md:w-40" style="animation-delay: -3s;" />
-  <img src="/hero/blob-3.svg" alt="" class="animate-drop-3 absolute left-[34%] top-[-80px] w-20 select-none md:w-32" style="animation-delay: -7s;" />
-  <img src="/hero/blob-1.svg" alt="" class="animate-drop-2 absolute left-[52%] top-[-180px] w-36 select-none md:w-52" style="animation-delay: -10s;" />
-  <img src="/hero/blob-3.svg" alt="" class="animate-drop-1 absolute left-[72%] top-[-100px] w-24 select-none md:w-36" style="animation-delay: -5s;" />
-  <img src="/hero/blob-2.svg" alt="" class="animate-drop-3 absolute left-[88%] top-[-220px] w-16 select-none md:w-28" style="animation-delay: -12s;" />
+---
+import AnimatedBlobs from './AnimatedBlobs.astro';
+---
 
-  <img src="/hero/blob-1.svg" alt="" class="animate-drop-3 absolute left-[10%] top-[-320px] w-24 select-none md:w-36" style="animation-delay: -15s;" />
-  <img src="/hero/blob-2.svg" alt="" class="animate-drop-1 absolute left-[27%] top-[-420px] w-14 select-none md:w-24" style="animation-delay: -9s;" />
-  <img src="/hero/blob-3.svg" alt="" class="animate-drop-2 absolute left-[45%] top-[-360px] w-32 select-none md:w-48" style="animation-delay: -18s;" />
-  <img src="/hero/blob-1.svg" alt="" class="animate-drop-1 absolute left-[63%] top-[-300px] w-20 select-none md:w-32" style="animation-delay: -14s;" />
-  <img src="/hero/blob-2.svg" alt="" class="animate-drop-3 absolute left-[80%] top-[-400px] w-28 select-none md:w-44" style="animation-delay: -20s;" />
-</div>
+<section class="relative flex min-h-[calc(100vh-64px)] w-full items-center justify-center overflow-hidden bg-spring px-6 pb-16 pt-16">
+  <AnimatedBlobs opacity="opacity-80" />
 
-  <!-- Soft overlay for readability -->
   <div class="pointer-events-none absolute inset-0 z-[1] bg-white/10"></div>
 
-  <!-- Content -->
   <div class="relative z-10 flex max-w-[520px] flex-col items-center text-center">
     <h1 class="text-[48px] font-bold leading-[118.5%] md:text-[72px]">
       <span class="text-[#00E9DD]">Ciel</span><span class="text-brand-red">ixir</span>
@@ -31,8 +17,8 @@
     </p>
 
     <a
-      href="/drinks"
-      class="mt-12 rounded-full bg-brand-turquoise px-7 py-3 text-[15px] font-semibold text-black shadow-button transition hover:scale-105"
+      href="#weather-section"
+      class="mt-12 rounded-full bg-brand-turquoise px-7 py-3 text-[15px] font-semibold text-black shadow-button transition hover:scale-105 active:scale-95"
     >
       Trouver ma boisson
     </a>

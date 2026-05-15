@@ -21,6 +21,7 @@
   --gradient-quiz: linear-gradient(90deg, #e6fbf9 2.41%, #ecfdf7 23.16%, #fbfdfd 45.75%, #d8fbfb 98.32%);
   --gradient-card: linear-gradient(164deg, #ffffff 28.3%, #edffe8 58.94%);
   --gradient-mint: linear-gradient(156deg, #f0fff4 9.03%, #e4f9de 60.34%, #e0fdf9 94.54%);
+  --gradient-button: linear-gradient(90deg, #47ece7 0%, #31c6df 100%);
 
   /* Shadows */
   --shadow-soft: 0 2px 4px rgba(0, 0, 0, 0.10);
@@ -28,4 +29,6 @@
   --shadow-card: 0 0 8px rgba(0, 0, 0, 0.15);
   --shadow-strong-button: 0 4px 4px rgba(0, 0, 0, 0.25);
   --shadow-panel: 0 10px 15px rgba(0, 0, 0, 0.10);
+  --shadow-quiz-card: 0 4px 9.4px 6px rgba(0, 233, 221, 0.10);
+--shadow-quiz-button: 0 4px 4px #4cc9cb;
 }

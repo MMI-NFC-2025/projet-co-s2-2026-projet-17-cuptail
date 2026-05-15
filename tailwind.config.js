@@ -28,6 +28,7 @@ export default {
         quiz: 'var(--gradient-quiz)',
         card: 'var(--gradient-card)',
         mint: 'var(--gradient-mint)',
+        button: 'var(--gradient-button)',
       },
       boxShadow: {
         soft: 'var(--shadow-soft)',

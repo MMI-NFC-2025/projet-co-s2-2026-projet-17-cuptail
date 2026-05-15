@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import AnimatedBlobs from '../components/AnimatedBlobs.astro';
 
 const values = [
   {
@@ -52,65 +53,56 @@ const team = [
   {
     name: 'Ruslana BUDNIAK',
     role: 'UX Designer',
-    image: '/ruslana-avatar.png',
+    image: '/images/avatar-ruslanka.jpg',
   },
 ];
 ---
 
 <Layout title="À propos">
-  <section class="relative overflow-hidden bg-gradient-to-r from-[#F4FEE9] via-[#CDFFC7] to-[#91FFF9]">
-    <img
-      src="/hero-bg.png"
-      alt=""
-      class="absolute inset-0 h-full w-full object-cover opacity-90"
-    />
+  <section class="relative flex min-h-[calc(75vh-64px)] items-center overflow-hidden bg-spring px-6 py-16 md:min-h-[calc(82vh-64px)] md:px-16 lg:px-24">
+    <AnimatedBlobs opacity="opacity-55" />
 
-    <div class="absolute inset-x-0 top-0 z-[1] h-32 bg-gradient-to-b from-[#F4FEE9] to-transparent"></div>
+    <div class="pointer-events-none absolute inset-0 z-[1] bg-white/10"></div>
 
-    <div class="relative z-10 px-8 pt-3 pb-12 md:px-16 md:pt-16 md:pb-24 lg:px-24">
-      <div class="max-w-[900px]">
-        <h1 class="text-4xl font-bold leading-tight md:text-6xl">
-          <span class="text-black">À propos de</span>
-          <br />
-          <span class="text-[#00E9DD]">Cup</span><span class="text-[#FF4D50]">tail</span>
-        </h1>
+    <div class="relative z-10 mx-auto w-full max-w-5xl">
+      <h1 class="text-[42px] font-bold leading-[1.12] text-black md:text-[64px]">
+        <span>À propos de</span>
+        <br />
+        <span class="text-[#00E9DD]">Ciel</span><span class="text-brand-red">ixir</span>
+      </h1>
 
-        <p class="mt-14 text-base italic text-black md:text-[22px]">
-          Choisissez une boisson adaptée au moment
-        </p>
+      <p class="mt-12 max-w-xl text-[16px] italic text-black md:text-[22px]">
+        Choisissez une boisson adaptée au moment
+      </p>
 
-        <p class="mt-7 max-w-[760px] text-base leading-8 text-black md:text-xl">
-          Une plateforme qui recommande des boissons selon la météo, la saison et vos envies, afin de rendre le choix plus simple, plus rapide et plus agréable au quotidien.
-        </p>
-      </div>
+      <p class="mt-7 max-w-[760px] text-[16px] leading-8 text-black md:text-xl">
+        Une plateforme qui recommande des boissons selon la météo, la saison et vos envies, afin de rendre le choix plus simple, plus rapide et plus agréable au quotidien.
+      </p>
     </div>
   </section>
 
-  <section class="bg-[#DEFDF8] px-5 pt-10 pb-16 md:px-10 md:pt-16 md:pb-24 lg:px-16">
+  <section class="bg-brand-sectionMint px-5 py-16 md:px-10 md:py-24 lg:px-16">
     <div class="mx-auto max-w-[860px]">
       <div class="flex flex-col items-center">
-        <h2 class="text-center text-2xl font-bold text-black md:text-4xl">
-          Pourquoi Cuptail ?
-        </h2>
-
-        <div class="mt-3 h-1 w-[70px] rounded-full bg-[#3CEEDF]"></div>
+        <h2 class="section-title text-center">Pourquoi Cielixir ?</h2>
+        <div class="mt-3 h-1 w-[70px] rounded-full bg-brand-turquoise"></div>
       </div>
 
-      <div class="mt-10 overflow-hidden rounded-[2.5rem] bg-white shadow-sm">
+      <div class="mt-10 overflow-hidden rounded-[2.5rem] bg-white shadow-soft">
         <div class="px-6 py-8 md:px-12">
-          <p class="text-base leading-[30px] text-zinc-600 md:text-[19px]">
+          <p class="text-base leading-[30px] text-neutral-600 md:text-[19px]">
             Aujourd’hui, nous choisissons souvent nos boissons par habitude ou sans réelle inspiration. Pourtant, la météo, la température et le moment de la journée influencent naturellement nos envies.
           </p>
         </div>
 
-        <div class="mx-4 rounded-3xl border border-white/40 bg-[#CDFFC7] px-6 py-7 shadow-sm md:mx-8 md:px-10">
-          <p class="text-[15px] font-bold leading-[30px] text-zinc-700 md:text-lg">
-            Cuptail est né d’une idée simple : proposer des boissons adaptées au contexte du moment, avec une expérience claire, intuitive et visuelle.
+        <div class="mx-4 rounded-3xl bg-brand-greenSoft px-6 py-7 shadow-soft md:mx-8 md:px-10">
+          <p class="text-[15px] font-bold leading-[30px] text-neutral-700 md:text-lg">
+            Cielixir est né d’une idée simple : proposer des boissons adaptées au contexte du moment, avec une expérience claire, intuitive et visuelle.
           </p>
         </div>
 
         <div class="px-6 py-8 md:px-12">
-          <p class="text-base leading-[30px] text-zinc-600 md:text-[19px]">
+          <p class="text-base leading-[30px] text-neutral-600 md:text-[19px]">
             L’objectif n’est pas seulement de montrer des recettes, mais d’aider l’utilisateur à découvrir plus facilement ce qu’il pourrait aimer boire aujourd’hui.
           </p>
         </div>
@@ -118,122 +110,87 @@ const team = [
     </div>
   </section>
 
-  <section class="bg-white px-5 pt-12 pb-16 md:px-10 md:pt-20 md:pb-28 lg:px-16">
+  <section class="bg-white px-5 py-16 md:px-10 md:py-24 lg:px-16">
     <div class="flex flex-col items-center">
-      <h2 class="text-center text-2xl font-bold text-black md:text-4xl">
-        Nos valeurs
-      </h2>
-
-      <div class="mt-3 h-1 w-[70px] rounded-full bg-[#3CEEDF]"></div>
+      <h2 class="section-title text-center">Nos valeurs</h2>
+      <div class="mt-3 h-1 w-[70px] rounded-full bg-brand-turquoise"></div>
     </div>
 
-    <div class="mt-7 flex flex-col items-center gap-6">
-      {
-        values.map((value) => (
-          <div class="flex w-full max-w-[760px] items-start gap-5 rounded-3xl bg-[#F9F9F9] px-5 py-5 transition hover:shadow-md md:px-8 md:py-7">
-            <div class="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-xl bg-white">
-              <img
-                src={value.icon}
-                alt=""
-                class="h-[30px] w-[30px] object-contain"
-              />
-            </div>
-
-            <div>
-              <h3 class="text-base font-bold leading-6 text-black md:text-xl">
-                {value.title}
-              </h3>
-
-              <p class="mt-2 text-[13px] leading-[19.5px] text-zinc-500 md:text-base md:leading-7">
-                {value.text}
-              </p>
-            </div>
+    <div class="mt-8 flex flex-col items-center gap-6">
+      {values.map((value) => (
+        <article class="flex w-full max-w-[760px] items-start gap-5 rounded-3xl bg-brand-paleGray px-5 py-5 transition hover:shadow-card md:px-8 md:py-7">
+          <div class="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-xl bg-white shadow-soft">
+            <img src={value.icon} alt="" class="h-[30px] w-[30px] object-contain" />
           </div>
-        ))
-      }
+
+          <div>
+            <h3 class="panel-title md:text-xl">{value.title}</h3>
+            <p class="panel-text mt-2 md:text-base md:leading-7">{value.text}</p>
+          </div>
+        </article>
+      ))}
     </div>
   </section>
 
-  <section class="bg-[#DEFDF8] px-5 pt-12 pb-16 md:px-10 md:pt-20 md:pb-24 lg:px-16">
+  <section class="bg-brand-sectionMint px-5 py-16 md:px-10 md:py-24 lg:px-16">
     <div class="mx-auto max-w-[860px]">
       <div class="flex flex-col items-center">
-        <h2 class="text-center text-2xl font-bold text-black md:text-4xl">
-          Ce que propose Cuptail
-        </h2>
-
-        <div class="mt-3 h-1 w-[70px] rounded-full bg-[#3CEEDF]"></div>
+        <h2 class="section-title text-center">Ce que propose Cielixir</h2>
+        <div class="mt-3 h-1 w-[70px] rounded-full bg-brand-turquoise"></div>
       </div>
 
       <div class="mt-10 flex flex-col items-center gap-3">
-        {
-          features.map((feature) => (
-            <div class="flex w-full max-w-[760px] items-center gap-6 rounded-3xl bg-white px-4 py-4">
-              <div class="flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-full bg-[#19EBDE]">
-                <img
-                  src={feature.icon}
-                  alt=""
-                  class="h-6 w-6 object-contain"
-                />
-              </div>
-
-              <p class="text-[14px] font-semibold leading-[19.6px] text-black md:text-[17px] md:leading-7">
-                {feature.text}
-              </p>
+        {features.map((feature) => (
+          <article class="flex w-full max-w-[760px] items-center gap-6 rounded-3xl bg-white px-4 py-4 shadow-soft">
+            <div class="flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-full bg-brand-turquoise">
+              <img src={feature.icon} alt="" class="h-6 w-6 object-contain" />
             </div>
-          ))
-        }
+
+            <p class="text-[14px] font-semibold leading-[19.6px] text-black md:text-[17px] md:leading-7">
+              {feature.text}
+            </p>
+          </article>
+        ))}
       </div>
     </div>
   </section>
 
-  <section class="bg-white px-5 pt-12 pb-[70px] md:px-10 md:pt-20 lg:px-16">
+  <section class="bg-white px-5 pb-[70px] pt-16 md:px-10 md:pt-24 lg:px-16">
     <div class="mx-auto max-w-[860px]">
       <div class="flex flex-col items-center">
-        <h2 class="text-center text-2xl font-bold text-black md:text-4xl">
-          L’équipe
-        </h2>
-
-        <div class="mt-3 h-1 w-[70px] rounded-full bg-[#3CEEDF]"></div>
+        <h2 class="section-title text-center">L’équipe</h2>
+        <div class="mt-3 h-1 w-[70px] rounded-full bg-brand-turquoise"></div>
       </div>
 
-      <div class="mx-auto mt-7 max-w-[760px]">
-        <p class="text-[13px] leading-[19.5px] text-zinc-500 md:text-base md:leading-7">
-          Cuptail est un projet conçu par trois étudiantes en formation Métiers du Multimédia et de l'Internet.
+      <div class="mx-auto mt-8 max-w-[760px]">
+        <p class="panel-text md:text-base md:leading-7">
+          Cielixir est un projet conçu par trois étudiantes en formation Métiers du Multimédia et de l'Internet.
         </p>
 
-        <p class="mt-7 text-[13px] leading-[19.5px] text-zinc-500 md:text-base md:leading-7">
+        <p class="panel-text mt-7 md:text-base md:leading-7">
           Ce projet s’inscrit dans un cadre pédagogique et expérimental, avec l’ambition de proposer une expérience utile, cohérente et réaliste.
         </p>
       </div>
 
       <div class="mt-10 flex flex-col items-center gap-5">
-        {
-          team.map((member) => (
-            <div class="flex w-full max-w-[760px] items-center gap-5 rounded-3xl bg-white px-[18px] py-4 shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
-              <img
-                src={member.image}
-                alt={member.name}
-                class="h-[58px] w-[58px] shrink-0 object-cover"
-              />
+        {team.map((member) => (
+          <article class="flex w-full max-w-[760px] items-center gap-5 rounded-3xl bg-white px-[18px] py-4 shadow-card">
+            <img src={member.image} alt={member.name} class="h-[58px] w-[58px] shrink-0 rounded-full object-cover" />
 
-              <div>
-                <h3 class="text-base font-bold leading-6 text-black md:text-xl">
-                  {member.name}
-                </h3>
-
-                <p class="mt-1 text-[13px] italic leading-[19.5px] text-zinc-500 md:text-[15px]">
-                  {member.role}
-                </p>
-              </div>
+            <div>
+              <h3 class="panel-title md:text-xl">{member.name}</h3>
+              <p class="mt-1 text-[13px] italic leading-[19.5px] text-neutral-500 md:text-[15px]">
+                {member.role}
+              </p>
             </div>
-          ))
-        }
+          </article>
+        ))}
       </div>
 
       <div class="mt-[70px] flex justify-center">
         <a
           href="/contact"
-          class="flex h-12 items-center justify-center rounded-full bg-[#3CEEDF] px-8 text-base font-semibold text-black shadow-md transition hover:scale-[1.02] active:scale-[0.98]"
+          class="flex h-12 items-center justify-center rounded-full bg-brand-turquoise px-8 text-base font-semibold text-black shadow-button transition hover:scale-[1.02] active:scale-[0.98]"
         >
           Nous contacter
         </a>
