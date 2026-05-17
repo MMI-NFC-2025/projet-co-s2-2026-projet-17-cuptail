@@ -1,0 +1,65 @@
+---
+interface Category {
+  id: string;
+  collectionId: string;
+  nom_categorie: string;
+  image_categorie?: string;
+}
+
+const { categories } = Astro.props as {
+  categories: Category[];
+};
+---
+
+<section class="bg-white px-4 py-10 md:py-16">
+  <div class="mx-auto max-w-6xl">
+    <div class="mb-6 flex items-center justify-between md:mb-10">
+      <h2 class="section-title">Catégories populaires</h2>
+
+      <a href="/boissons" class="hidden text-sm font-bold text-brand-turquoise md:inline">
+        Voir toutes les boissons
+      </a>
+    </div>
+
+    <div class="flex gap-4 overflow-x-auto pb-4 md:grid md:grid-cols-4 md:gap-6 md:overflow-visible lg:grid-cols-5">
+      {categories.map((category) => {
+        const imageUrl = category.image_categorie
+          ? `https://api.ruslanabudniak.fr/api/files/${category.collectionId}/${category.id}/${category.image_categorie}`
+          : '/images/placeholder-drink.png';
+
+        return (
+          <a
+            href={`/boissons?categorie=${category.id}`}
+            class="group w-[145px] shrink-0 overflow-hidden rounded-[18px] bg-white shadow-card transition hover:-translate-y-1 hover:shadow-panel md:w-full"
+          >
+            <div class="h-[105px] bg-card md:h-[130px]">
+              <img
+                src={imageUrl}
+                alt={category.nom_categorie}
+                class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                loading="lazy"
+              />
+            </div>
+
+            <div class="px-3 py-3 text-center">
+              <h3 class="line-clamp-1 text-[14px] font-bold text-black md:text-[16px]">
+                {category.nom_categorie}
+              </h3>
+
+              <p class="mt-1 text-[11px] font-bold text-neutral-400 md:text-[12px]">
+                Voir les recettes
+              </p>
+            </div>
+          </a>
+        );
+      })}
+    </div>
+
+    <a
+      href="/boissons"
+      class="mt-6 inline-flex rounded-full bg-brand-turquoise px-6 py-3 text-sm font-bold text-black shadow-button md:hidden"
+    >
+      Voir toutes les boissons
+    </a>
+  </div>
+</section>

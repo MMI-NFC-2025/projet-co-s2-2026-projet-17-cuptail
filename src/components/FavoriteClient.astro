@@ -1,0 +1,91 @@
+<script>
+  import { pb } from '../backend/backend.js';
+
+  const HEART_EMPTY = '/icons/heart-empty.svg';
+  const HEART_FULL = '/icons/heart-full.svg';
+
+  async function getFavoriteMap() {
+    if (!pb.authStore.isValid || !pb.authStore.model) {
+      return new Map();
+    }
+
+    const userId = pb.authStore.model.id;
+
+    const favoris = await pb.collection('favoris').getFullList({
+      filter: `user = "${userId}"`,
+    });
+
+    return new Map(favoris.map((favori) => [favori.boisson, favori.id]));
+  }
+
+  function updateButton(button: HTMLButtonElement, isActive: boolean, favoriteId = '') {
+    const img = button.querySelector('img');
+
+    button.dataset.favoriteActive = String(isActive);
+    button.dataset.favoriteId = favoriteId;
+
+    if (img) {
+      img.src = isActive ? HEART_FULL : HEART_EMPTY;
+    }
+  }
+
+  async function refreshFavoriteButtons() {
+    const buttons = document.querySelectorAll<HTMLButtonElement>('.js-favorite');
+
+    if (!buttons.length) return;
+
+    const favoriteMap = await getFavoriteMap();
+
+    buttons.forEach((button) => {
+      const boissonId = button.dataset.boissonId || '';
+      const favoriteId = favoriteMap.get(boissonId);
+
+      updateButton(button, Boolean(favoriteId), favoriteId || '');
+    });
+  }
+
+  async function toggleFavorite(button: HTMLButtonElement) {
+    if (!pb.authStore.isValid || !pb.authStore.model) {
+      window.location.href = '/login';
+      return;
+    }
+
+    const boissonId = button.dataset.boissonId;
+    const favoriteId = button.dataset.favoriteId;
+    const isActive = button.dataset.favoriteActive === 'true';
+
+    if (!boissonId) return;
+
+    if (isActive && favoriteId) {
+      await pb.collection('favoris').delete(favoriteId);
+      updateButton(button, false, '');
+    } else {
+      const favori = await pb.collection('favoris').create({
+        user: pb.authStore.model.id,
+        boisson: boissonId,
+      });
+
+      updateButton(button, true, favori.id);
+    }
+
+    window.dispatchEvent(new CustomEvent('favorites:changed'));
+  }
+
+  document.addEventListener('click', async (event) => {
+    const target = event.target;
+
+    if (!(target instanceof Element)) return;
+
+    const button = target.closest<HTMLButtonElement>('.js-favorite');
+
+    if (!button) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    await toggleFavorite(button);
+  });
+
+  window.addEventListener('favorites:refresh', refreshFavoriteButtons);
+  document.addEventListener('DOMContentLoaded', refreshFavoriteButtons);
+</script>

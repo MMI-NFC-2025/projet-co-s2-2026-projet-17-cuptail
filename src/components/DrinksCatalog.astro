@@ -1,0 +1,494 @@
+---
+type Category = {
+  id: string;
+  nom_categorie?: string;
+  categories_boissons?: string;
+};
+
+type Boisson = Record<string, any>;
+
+const { boissons, categories, initialTemperature = '', initialCategorie = '' } = Astro.props as {
+  boissons: Boisson[];
+  categories: Category[];
+  initialTemperature?: string;
+  initialCategorie?: string;
+};
+
+
+---
+
+<div class="mb-8 flex items-center justify-between gap-3">
+  <button
+    id="open-filters"
+    class="inline-flex items-center gap-3 rounded-full bg-white px-5 py-3 text-sm font-bold text-black shadow-button transition hover:scale-105 active:scale-95"
+    type="button"
+  >
+    <img src="/icons/filtre.svg" class="h-4 w-4" alt="" />
+    Filtres
+  </button>
+
+  <button
+    id="open-sort"
+    class="inline-flex items-center gap-3 rounded-full bg-white px-5 py-3 text-sm font-bold text-black shadow-button transition hover:scale-105 active:scale-95"
+    type="button"
+  >
+    <img src="/icons/sort.svg" class="h-4 w-4" alt="" />
+    Trier
+  </button>
+</div>
+
+<p id="results-count" class="mb-5 text-sm font-bold text-neutral-500"></p>
+
+<div
+  id="boissons-grid"
+  class="grid grid-cols-2 justify-items-center gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+></div>
+
+<div id="filters-modal" class="fixed inset-0 z-50 hidden bg-black/40">
+  <div class="absolute bottom-0 left-0 right-0 max-h-[88vh] overflow-y-auto rounded-t-[32px] bg-white p-5 shadow-panel md:left-1/2 md:top-1/2 md:max-h-[80vh] md:w-full md:max-w-2xl md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-[32px]">
+    <div class="mb-6 flex items-center justify-between">
+      <h2 class="text-xl font-bold text-black">Filtres</h2>
+
+      <button id="close-filters" class="grid h-10 w-10 place-items-center rounded-full bg-neutral-100" type="button">
+        <img src="/close.svg" class="h-4 w-4" alt="" />
+      </button>
+    </div>
+
+    <form id="filters-form" class="space-y-6">
+      <fieldset>
+        <legend class="mb-3 text-sm font-bold text-black">Catégories</legend>
+
+        <div class="grid grid-cols-2 gap-2 md:grid-cols-3">
+          {categories.map((category) => (
+            <label>
+              <input type="checkbox" name="categorie" value={category.id} class="peer hidden" />
+
+              <span class="block rounded-full bg-neutral-100 px-4 py-2 text-center text-sm font-bold text-black peer-checked:bg-brand-turquoise">
+                {category.nom_categorie}
+              </span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend class="mb-3 text-sm font-bold text-black">Température</legend>
+
+        <div class="grid grid-cols-3 gap-2">
+          <label><input type="checkbox" name="temperature_service" value="froid" class="peer hidden" /><span class="filter-pill">Froid</span></label>
+          <label><input type="checkbox" name="temperature_service" value="chaud" class="peer hidden" /><span class="filter-pill">Chaud</span></label>
+          <label><input type="checkbox" name="temperature_service" value="tempere" class="peer hidden" /><span class="filter-pill">Tempéré</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend class="mb-3 text-sm font-bold text-black">Goût</legend>
+
+        <div class="grid grid-cols-2 gap-2 md:grid-cols-4">
+          <label><input type="checkbox" name="profil_gout" value="fruite" class="peer hidden" /><span class="filter-pill">Fruité</span></label>
+          <label><input type="checkbox" name="profil_gout" value="baies" class="peer hidden" /><span class="filter-pill">Baies</span></label>
+          <label><input type="checkbox" name="profil_gout" value="legume" class="peer hidden" /><span class="filter-pill">Légume</span></label>
+          <label><input type="checkbox" name="profil_gout" value="cremeux" class="peer hidden" /><span class="filter-pill">Crémeux</span></label>
+          <label><input type="checkbox" name="profil_gout" value="epice" class="peer hidden" /><span class="filter-pill">Épicé</span></label>
+          <label><input type="checkbox" name="profil_gout" value="acidule" class="peer hidden" /><span class="filter-pill">Acidulé</span></label>
+          <label><input type="checkbox" name="profil_gout" value="doux" class="peer hidden" /><span class="filter-pill">Doux</span></label>
+          <label><input type="checkbox" name="profil_gout" value="amer" class="peer hidden" /><span class="filter-pill">Amer</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend class="mb-3 text-sm font-bold text-black">Sucre</legend>
+
+        <div class="grid grid-cols-4 gap-2">
+          <label><input type="checkbox" name="taux_sucre" value="sans" class="peer hidden" /><span class="filter-pill">Sans</span></label>
+          <label><input type="checkbox" name="taux_sucre" value="faible" class="peer hidden" /><span class="filter-pill">Faible</span></label>
+          <label><input type="checkbox" name="taux_sucre" value="moyen" class="peer hidden" /><span class="filter-pill">Moyen</span></label>
+          <label><input type="checkbox" name="taux_sucre" value="eleve" class="peer hidden" /><span class="filter-pill">Élevé</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend class="mb-3 text-sm font-bold text-black">Caféine</legend>
+
+        <div class="grid grid-cols-4 gap-2">
+          <label><input type="checkbox" name="taux_cafeine" value="sans" class="peer hidden" /><span class="filter-pill">Sans</span></label>
+          <label><input type="checkbox" name="taux_cafeine" value="faible" class="peer hidden" /><span class="filter-pill">Faible</span></label>
+          <label><input type="checkbox" name="taux_cafeine" value="moyen" class="peer hidden" /><span class="filter-pill">Moyen</span></label>
+          <label><input type="checkbox" name="taux_cafeine" value="eleve" class="peer hidden" /><span class="filter-pill">Élevé</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend class="mb-3 text-sm font-bold text-black">Météo</legend>
+
+        <div class="grid grid-cols-3 gap-2">
+          <label><input type="checkbox" name="weather_context" value="chaud" class="peer hidden" /><span class="filter-pill">Chaud</span></label>
+          <label><input type="checkbox" name="weather_context" value="froid" class="peer hidden" /><span class="filter-pill">Froid</span></label>
+          <label><input type="checkbox" name="weather_context" value="pluie" class="peer hidden" /><span class="filter-pill">Pluie</span></label>
+          <label><input type="checkbox" name="weather_context" value="soleil" class="peer hidden" /><span class="filter-pill">Soleil</span></label>
+          <label><input type="checkbox" name="weather_context" value="nuageux" class="peer hidden" /><span class="filter-pill">Nuageux</span></label>
+          <label><input type="checkbox" name="weather_context" value="normal" class="peer hidden" /><span class="filter-pill">Normal</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend class="mb-3 text-sm font-bold text-black">Autres</legend>
+
+        <label class="flex items-center justify-between rounded-2xl bg-neutral-100 px-4 py-3 text-sm font-bold">
+          Vegan uniquement
+          <input type="checkbox" name="is_vegan" value="true" class="h-5 w-5 accent-[#3ceedf]" />
+        </label>
+      </fieldset>
+
+      <div class="sticky bottom-0 flex gap-3 bg-white pt-4">
+        <button id="reset-filters" type="button" class="w-full rounded-full bg-neutral-100 px-5 py-3 text-sm font-bold text-black">
+          Réinitialiser
+        </button>
+
+        <button type="submit" class="w-full rounded-full bg-brand-turquoise px-5 py-3 text-sm font-bold text-black shadow-button">
+          Appliquer
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="sort-modal" class="fixed inset-0 z-50 hidden bg-black/40">
+  <div class="absolute bottom-0 left-0 right-0 rounded-t-[32px] bg-white p-5 shadow-panel md:left-1/2 md:top-1/2 md:w-full md:max-w-md md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-[32px]">
+    <div class="mb-6 flex items-center justify-between">
+      <h2 class="text-xl font-bold text-black">Trier</h2>
+
+      <button id="close-sort" class="grid h-10 w-10 place-items-center rounded-full bg-neutral-100" type="button">
+        <img src="/close.svg" class="h-4 w-4" alt="" />
+      </button>
+    </div>
+
+    <div class="space-y-2">
+      <button class="sort-option" data-sort="recent">Plus récents</button>
+      <button class="sort-option" data-sort="time">Plus rapides</button>
+      <button class="sort-option" data-sort="sugar">Moins sucrés</button>
+      <button class="sort-option" data-sort="caffeine">Moins caféinés</button>
+      <button class="sort-option" data-sort="recommended">Recommandés</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .filter-pill {
+    display: block;
+    border-radius: 999px;
+    background: #f5f5f5;
+    padding: 0.5rem 0.75rem;
+    text-align: center;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: black;
+  }
+
+  input:checked + .filter-pill {
+    background: var(--color-turquoise);
+  }
+
+  .sort-option {
+    width: 100%;
+    border-radius: 999px;
+    background: #f5f5f5;
+    padding: 0.85rem 1rem;
+    text-align: left;
+    font-weight: 700;
+  }
+</style>
+
+<script define:vars={{ boissons, initialTemperature, initialCategorie }}>
+  const API_BASE = 'https://api.ruslanabudniak.fr';
+
+  const grid = document.querySelector('#boissons-grid');
+  const countEl = document.querySelector('#results-count');
+
+  const filtersModal = document.querySelector('#filters-modal');
+  const sortModal = document.querySelector('#sort-modal');
+
+  const openFilters = document.querySelector('#open-filters');
+  const closeFilters = document.querySelector('#close-filters');
+  const openSort = document.querySelector('#open-sort');
+  const closeSort = document.querySelector('#close-sort');
+
+  const form = document.querySelector('#filters-form');
+  const resetButton = document.querySelector('#reset-filters');
+
+  let currentSort = 'recommended';
+
+  const categoryColors = {
+    Thé: 'bg-brand-green',
+    Thés: 'bg-brand-green',
+    Infusions: 'bg-[#E8B84D]',
+    Cocktails: 'bg-brand-red',
+    'Cocktails sans alcool': 'bg-brand-red',
+    Smoothies: 'bg-[#8B7CF6]',
+    Café: 'bg-[#9B7E72]',
+    Protéines: 'bg-[#FF7A4F]',
+    'Boissons protéinées': 'bg-[#FF7A4F]',
+    Végétales: 'bg-[#A7C77A]',
+    'Boissons végétales': 'bg-[#A7C77A]',
+    Fermentées: 'bg-[#6ED9D0]',
+    'Boissons fermentées': 'bg-[#6ED9D0]',
+    'Boissons légumes': 'bg-[#5FCF4B]',
+    Légumes: 'bg-[#5FCF4B]',
+  };
+
+  function openModal(modal) {
+    modal.classList.remove('hidden');
+  }
+
+  function closeModal(modal) {
+    modal.classList.add('hidden');
+  }
+
+  function getCheckedValues(name) {
+    return [...form.querySelectorAll(`input[name="${name}"]:checked`)].map((input) => input.value);
+  }
+
+  function getNumberValue(value) {
+    const scores = {
+      sans: 0,
+      faible: 1,
+      moyen: 2,
+      eleve: 3,
+    };
+
+    return scores[value] ?? 0;
+  }
+
+function normalizeRelationIds(value) {
+  if (!value) return [];
+
+  if (Array.isArray(value)) {
+    return value
+      .map((item) => {
+        if (typeof item === 'string') return item;
+        if (item && typeof item === 'object') return item.id;
+        return null;
+      })
+      .filter(Boolean);
+  }
+
+  if (typeof value === 'string') return [value];
+
+  if (value && typeof value === 'object' && value.id) {
+    return [value.id];
+  }
+
+  return [];
+}
+
+function getBoissonCategories(boisson) {
+  return [
+    ...normalizeRelationIds(boisson.categories),
+    ...normalizeRelationIds(boisson.categorie),
+    ...normalizeRelationIds(boisson.expand?.categories),
+    ...normalizeRelationIds(boisson.expand?.categorie),
+  ];
+}
+
+  function getBoissonWeather(boisson) {
+    if (Array.isArray(boisson.weather_context)) return boisson.weather_context;
+    if (boisson.weather_context) return [boisson.weather_context];
+
+    return [];
+  }
+
+  function getCategoryName(boisson) {
+    const expandedCategories = boisson.expand?.categories || boisson.expand?.categorie;
+    const firstCategory = Array.isArray(expandedCategories)
+      ? expandedCategories[0]
+      : expandedCategories;
+
+    return (
+      firstCategory?.nom_categorie ||
+      firstCategory?.categories_boissons ||
+      'Boisson'
+    );
+  }
+
+  function getImageUrl(boisson) {
+    const fileName = Array.isArray(boisson.photo_boisson)
+      ? boisson.photo_boisson[0]
+      : boisson.photo_boisson;
+
+    return fileName
+      ? `${API_BASE}/api/files/${boisson.collectionId}/${boisson.id}/${fileName}`
+      : '/images/placeholder-drink.png';
+  }
+
+  function sortBoissons(list) {
+    return [...list].sort((a, b) => {
+      if (currentSort === 'recent') {
+        return new Date(b.created) - new Date(a.created);
+      }
+
+      if (currentSort === 'time') {
+        return (a.temps_preparation || 999) - (b.temps_preparation || 999);
+      }
+
+      if (currentSort === 'sugar') {
+        return getNumberValue(a.taux_sucre) - getNumberValue(b.taux_sucre);
+      }
+
+      if (currentSort === 'caffeine') {
+        return getNumberValue(a.taux_cafeine) - getNumberValue(b.taux_cafeine);
+      }
+
+      return Number(b.is_recommended) - Number(a.is_recommended);
+    });
+  }
+
+  function renderCard(boisson) {
+    const imageUrl = getImageUrl(boisson);
+    const category = getCategoryName(boisson);
+    const categoryColor = categoryColors[category] || 'bg-brand-green';
+    const description = boisson.description_courte || '';
+
+    return `
+      <article class="flex h-[276px] w-[156px] shrink-0 flex-col overflow-hidden rounded-2xl bg-card shadow-panel transition duration-200 hover:-translate-y-1 hover:shadow-card md:h-[318px] md:w-[178px]">
+        <div class="relative h-[146px] shrink-0 md:h-[168px]">
+          <span class="absolute left-[14px] top-[8px] z-10 rounded-full px-3 py-1 text-center text-[9px] font-bold leading-[13.5px] text-white md:text-[10px] ${categoryColor}">
+            ${category}
+          </span>
+
+<button
+  class="js-favorite absolute right-[14px] top-[8px] z-10 grid h-[21px] w-[21px] place-items-center rounded-full bg-white shadow-soft transition hover:scale-110 md:h-6 md:w-6"
+  type="button"
+  aria-label="Ajouter aux favoris"
+  data-boisson-id="${boisson.id}"
+  data-favorite-active="false"
+>
+  <img class="h-[9px] w-[10px] md:h-[10px] md:w-[11px]" src="/icons/heart-empty.svg" alt="" />
+</button>
+
+          <img
+            class="absolute left-1/2 top-[14px] h-[132px] w-[146px] -translate-x-1/2 object-contain md:h-[152px] md:w-[168px]"
+            src="${imageUrl}"
+            alt="${boisson.nom_boisson}"
+            loading="lazy"
+          />
+        </div>
+
+        <div class="flex flex-1 flex-col bg-white px-[15px] pb-4 pt-[13px] md:px-[18px] md:pb-5 md:pt-4">
+          <h3 class="line-clamp-2 min-h-[32px] text-[13px] font-bold leading-[16px] text-black md:min-h-[40px] md:text-[15px] md:leading-5">
+            ${boisson.nom_boisson}
+          </h3>
+
+          <p class="mt-1.5 line-clamp-2 text-[11px] font-normal leading-[16px] text-brand-warmGray md:text-[13px] md:leading-[18px]">
+            ${description}
+          </p>
+
+          <a
+            class="mt-auto flex items-center justify-between pt-3 text-[12px] font-bold text-brand-turquoise no-underline md:text-[14px]"
+            href="/boissons/${boisson.slug}"
+          >
+            <span>Voir la recette</span>
+
+            <span class="grid h-6 w-6 place-items-center rounded-full bg-white shadow-soft md:h-7 md:w-7">
+              <img class="h-[13px] w-[9px]" src="/icons/arrow-right.svg" alt="" />
+            </span>
+          </a>
+        </div>
+      </article>
+    `;
+  }
+
+  function renderBoissons(list) {
+    countEl.textContent = `${list.length} boisson${list.length > 1 ? 's' : ''} trouvée${list.length > 1 ? 's' : ''}`;
+
+    if (!list.length) {
+      grid.innerHTML = `
+        <div class="col-span-full rounded-[28px] bg-white p-8 text-center shadow-card">
+          <p class="text-lg font-bold text-black">Aucune boisson trouvée</p>
+          <p class="mt-2 text-sm text-neutral-500">Essaie de modifier les filtres.</p>
+        </div>
+      `;
+      return;
+    }
+
+    grid.innerHTML = list.map(renderCard).join('');
+    window.dispatchEvent(new CustomEvent('favorites:refresh'));
+  }
+
+  function applyFilters() {
+    const categories = getCheckedValues('categorie');
+    const temperatures = getCheckedValues('temperature_service');
+    const gouts = getCheckedValues('profil_gout');
+    const sucres = getCheckedValues('taux_sucre');
+    const cafeines = getCheckedValues('taux_cafeine');
+    const weathers = getCheckedValues('weather_context');
+    const veganOnly = form.querySelector('input[name="is_vegan"]').checked;
+
+    const filtered = boissons.filter((boisson) => {
+      const boissonCategories = getBoissonCategories(boisson);
+      const boissonWeather = getBoissonWeather(boisson);
+
+      if (categories.length && !categories.some((id) => boissonCategories.includes(id))) return false;
+      if (temperatures.length && !temperatures.includes(boisson.temperature_service)) return false;
+      if (gouts.length && !gouts.includes(boisson.profil_gout)) return false;
+      if (sucres.length && !sucres.includes(boisson.taux_sucre)) return false;
+      if (cafeines.length && !cafeines.includes(boisson.taux_cafeine)) return false;
+      if (weathers.length && !weathers.some((weather) => boissonWeather.includes(weather))) return false;
+      if (veganOnly && !boisson.is_vegan) return false;
+
+      return true;
+    });
+
+    renderBoissons(sortBoissons(filtered));
+  }
+
+  openFilters.addEventListener('click', () => openModal(filtersModal));
+  closeFilters.addEventListener('click', () => closeModal(filtersModal));
+  openSort.addEventListener('click', () => openModal(sortModal));
+  closeSort.addEventListener('click', () => closeModal(sortModal));
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    closeModal(filtersModal);
+    applyFilters();
+  });
+
+  resetButton.addEventListener('click', () => {
+    form.reset();
+    closeModal(filtersModal);
+    applyFilters();
+  });
+
+  document.querySelectorAll('.sort-option').forEach((button) => {
+    button.addEventListener('click', () => {
+      currentSort = button.dataset.sort;
+      closeModal(sortModal);
+      applyFilters();
+    });
+  });
+
+const urlParams = new URLSearchParams(window.location.search);
+
+const selectedTemperature =
+  initialTemperature || urlParams.get('temperature') || '';
+
+const selectedCategorie =
+  initialCategorie || urlParams.get('categorie') || '';
+
+if (selectedTemperature) {
+  const input = form.querySelector(
+    `input[name="temperature_service"][value="${selectedTemperature}"]`
+  );
+
+  if (input) input.checked = true;
+}
+
+if (selectedCategorie) {
+  const input = form.querySelector(
+    `input[name="categorie"][value="${selectedCategorie}"]`
+  );
+
+  if (input) input.checked = true;
+}
+
+applyFilters();
+</script>

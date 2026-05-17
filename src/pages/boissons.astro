@@ -1,44 +1,32 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import DrinkCard from '../components/DrinkCard.astro';
-import { getBoissons } from '../backend/backend.js';
+import DrinksCatalog from '../components/DrinksCatalog.astro';
+import { getBoissons, getCategories } from '../backend/backend.js';
 
 const boissons = await getBoissons();
-const temperature = Astro.url.searchParams.get('temperature');
+const categories = await getCategories();
 
-const filteredBoissons = temperature
-  ? boissons.filter((boisson) => boisson.temperature_service === temperature)
-  : boissons;
+const initialTemperature = Astro.url.searchParams.get('temperature') || '';
+const initialCategorie = Astro.url.searchParams.get('categorie') || '';
 ---
 
 <Layout title="Toutes les boissons">
   <section class="min-h-[calc(100vh-64px)] bg-brand-paleGray px-4 py-8">
     <div class="mx-auto max-w-6xl">
-      <h1 class="page-title">Toutes les boissons</h1>
+      <div class="mb-8">
+        <h1 class="page-title">Toutes les boissons</h1>
 
-      <p class="page-subtitle mt-3">
-        Explore par type ou filtre selon ton besoin.
-      </p>
-
-      <div class="mt-8 flex gap-3 overflow-x-auto pb-3">
-        <a href="/boissons" class="rounded-full bg-white px-5 py-2 text-sm font-bold text-black shadow-button">
-          Toutes
-        </a>
-
-        <a href="/boissons?temperature=froid" class="rounded-full bg-seaBreeze px-5 py-2 text-sm font-bold text-black shadow-button">
-          Froid
-        </a>
-
-        <a href="/boissons?temperature=chaud" class="rounded-full bg-cottonCandy px-5 py-2 text-sm font-bold text-black shadow-button">
-          Chaud
-        </a>
+        <p class="page-subtitle mt-3">
+          Explore toutes nos recettes et trouve la boisson qui correspond à ton envie.
+        </p>
       </div>
 
-      <div class="mt-8 grid grid-cols-2 justify-items-center gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        {filteredBoissons.map((boisson) => (
-          <DrinkCard boisson={boisson} />
-        ))}
-      </div>
+      <DrinksCatalog
+        boissons={boissons}
+        categories={categories}
+        initialTemperature={initialTemperature}
+        initialCategorie={initialCategorie}
+      />
     </div>
   </section>
 </Layout>

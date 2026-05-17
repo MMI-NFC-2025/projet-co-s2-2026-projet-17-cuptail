@@ -6,11 +6,11 @@ import DrinkCard from '../components/DrinkCard.astro';
 import QuizSection from '../components/QuizSection.astro';
 
 import { getBoissons, getCategories, getFileUrl } from '../backend/backend.js';
+import CategoriesSection from '../components/CategoriesSection.astro';
+
 
 const boissons = await getBoissons();
 const categories = await getCategories();
-
-const popularCategories = categories.slice(0, 3);
 const nouveautes = boissons.filter((boisson) => boisson.is_new).slice(0, 6);
 ---
 
@@ -56,30 +56,7 @@ const nouveautes = boissons.filter((boisson) => boisson.is_new).slice(0, 6);
   </div>
 </section>
 
-  <section class="bg-white px-4 pb-8">
-    <div class="mx-auto max-w-5xl">
-      <div class="mb-4 flex items-center justify-between">
-        <h2 class="section-title-sm">Catégories populaires</h2>
-        <a href="/boissons" class="text-[12px] font-bold text-brand-turquoise">Voir tout</a>
-      </div>
-
-      <div class="grid grid-cols-3 gap-3">
-        {popularCategories.map((categorie) => (
-          <a href={`/boissons?categorie=${categorie.slug}`} class="overflow-hidden rounded-xl bg-white shadow-card">
-            <img
-              class="h-[82px] w-full object-cover"
-              src={getFileUrl(categorie, categorie.image_categorie)}
-              alt={categorie.nom_categorie}
-            />
-            <div class="p-2 text-center">
-              <h3 class="text-[12px] font-bold leading-[14px] text-black">{categorie.nom_categorie}</h3>
-              <p class="text-[9px] font-bold text-neutral-400">5 recettes</p>
-            </div>
-          </a>
-        ))}
-      </div>
-    </div>
-  </section>
+ <CategoriesSection categories={categories} />
 
 <QuizSection />
 
@@ -104,19 +81,50 @@ const nouveautes = boissons.filter((boisson) => boisson.is_new).slice(0, 6);
     </div>
   </section>
 
-  <section class="bg-white px-4 pb-12">
-    <div class="mx-auto max-w-5xl">
-      <h2 class="section-title-sm mb-4">Nouveautés</h2>
+<section class="bg-white px-4 pb-14 md:pb-20">
+  <div class="mx-auto max-w-6xl">
+    <div class="mb-6 flex items-center justify-between md:mb-10">
+      <h2 class="section-title">Dernières nouveautés</h2>
 
-      <div class="flex gap-4 overflow-x-auto pb-4">
-        {(nouveautes.length ? nouveautes : boissons.slice(0, 6)).map((boisson) => (
-          <div class="min-w-[156px]">
-            <DrinkCard boisson={boisson} />
-          </div>
-        ))}
+      <div class="hidden gap-3 md:flex">
+        <button id="news-prev" class="grid h-10 w-10 place-items-center rounded-full bg-white shadow-button" type="button">
+          <img src="/icons/arrow-left.svg" class="h-4 w-4" alt="" />
+        </button>
+
+        <button id="news-next" class="grid h-10 w-10 place-items-center rounded-full bg-white shadow-button" type="button">
+          <img src="/icons/arrow-right.svg" class="h-4 w-4" alt="" />
+        </button>
       </div>
     </div>
-  </section>
+
+    <div
+      id="news-carousel"
+      class="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-4 md:gap-6 xl:gap-8 scrollbar-hide"
+    >
+      {(nouveautes.length ? nouveautes : boissons.slice(0, 12)).slice(0, 12).map((boisson) => (
+        <div class="snap-start">
+          <DrinkCard boisson={boisson} />
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  const carousel = document.querySelector('#news-carousel');
+  const prev = document.querySelector('#news-prev');
+  const next = document.querySelector('#news-next');
+
+  const scrollAmount = 210;
+
+  prev?.addEventListener('click', () => {
+    carousel?.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+  });
+
+  next?.addEventListener('click', () => {
+    carousel?.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+  });
+</script>
 
   <section class="bg-white px-4 pb-12">
     <div class="mx-auto max-w-5xl">

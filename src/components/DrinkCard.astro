@@ -10,7 +10,9 @@ const imageUrl =
       ? getFileUrl(boisson, boisson.photo_boisson)
       : '/images/placeholder-drink.png';
 
-const expandedCategories = boisson.expand?.categories;
+const expandedCategories =
+  boisson.expand?.categories ||
+  boisson.expand?.categorie;
 
 const firstCategory = Array.isArray(expandedCategories)
   ? expandedCategories[0]
@@ -21,51 +23,64 @@ const categoryName =
   firstCategory?.categories_boissons ||
   'Boisson';
 
-const description = boisson.description_courte || boisson.description_boisson || '';
-const shortDescription =
-  description.length > 52 ? `${description.slice(0, 52)}...` : description;
+const description =
+  boisson.description_courte ||
+  boisson.description_boisson ||
+  '';
 
 const categoryColors = {
-  Thé: 'bg-[#6EED62]',
-  Thés: 'bg-[#6EED62]',
-  Infusions: 'bg-[#F5C65C]',
-  'Cocktails sans alcool': 'bg-[#FF4D50]',
-  Cocktails: 'bg-[#FF4D50]',
-  Smoothies: 'bg-[#9278F4]',
-  Café: 'bg-[#A58A7D]',
-  Protéines: 'bg-[#FF7C55]',
-  'Boissons protéinées': 'bg-[#FF7C55]',
-  Végétales: 'bg-[#A9C989]',
-  'Boissons végétales': 'bg-[#A9C989]',
-  Fermentées: 'bg-[#7BE5D7]',
-  'Boissons fermentées': 'bg-[#7BE5D7]',
+  Thé: 'bg-brand-green',
+  Thés: 'bg-brand-green',
+
+  Infusions: 'bg-[#E8B84D]',
+
+  Cocktails: 'bg-brand-red',
+  'Cocktails sans alcool': 'bg-brand-red',
+
+  Smoothies: 'bg-[#8B7CF6]',
+
+  Café: 'bg-[#9B7E72]',
+
+  Protéines: 'bg-[#FF7A4F]',
+  'Boissons protéinées': 'bg-[#FF7A4F]',
+
+  Végétales: 'bg-[#A7C77A]',
+  'Boissons végétales': 'bg-[#A7C77A]',
+
+  Fermentées: 'bg-[#6ED9D0]',
+  'Boissons fermentées': 'bg-[#6ED9D0]',
+
+  'Boissons légumes': 'bg-[#5FCF4B]',
+  Légumes: 'bg-[#5FCF4B]',
 } as Record<string, string>;
 
 const categoryColor = categoryColors[categoryName] || 'bg-brand-green';
 ---
 
 <article
-  class="relative h-[262px] w-[156px] shrink-0 overflow-hidden rounded-2xl bg-card shadow-panel transition duration-200 hover:-translate-y-1 hover:shadow-card md:h-[300px] md:w-[178px]"
+  class="flex h-[276px] w-[156px] shrink-0 flex-col overflow-hidden rounded-2xl bg-card shadow-panel transition duration-200 hover:-translate-y-1 hover:shadow-card md:h-[318px] md:w-[178px]"
 >
-  <!-- Top image area -->
-  <div class="relative h-[146px] md:h-[168px]">
+  <!-- IMAGE -->
+  <div class="relative h-[146px] shrink-0 md:h-[168px]">
     <span
-      class={`absolute left-[14px] top-[8px] z-10 min-w-[45px] rounded-full px-3 py-1 text-center text-[9px] font-bold leading-[13.5px] text-white md:text-[10px] ${categoryColor}`}
+      class={`absolute left-[14px] top-[8px] z-10 rounded-full px-3 py-1 text-center text-[9px] font-bold leading-[13.5px] text-white md:text-[10px] ${categoryColor}`}
     >
       {categoryName}
     </span>
 
-    <button
-      class="absolute right-[14px] top-[8px] z-10 grid h-[21px] w-[21px] place-items-center rounded-full bg-white shadow-soft transition hover:scale-110 md:h-6 md:w-6"
-      type="button"
-      aria-label="Ajouter aux favoris"
-    >
-      <img
-        class="h-[9px] w-[10px] md:h-[10px] md:w-[11px]"
-        src="/icons/heart.svg"
-        alt=""
-      />
-    </button>
+<button
+  class="js-favorite absolute right-[14px] top-[8px] z-10 grid h-[21px] w-[21px] place-items-center rounded-full bg-white shadow-soft transition hover:scale-110 md:h-6 md:w-6"
+  type="button"
+  aria-label="Ajouter aux favoris"
+  data-boisson-id={boisson.id}
+  data-favorite-active="false"
+>
+  <img
+    class="h-[9px] w-[10px] md:h-[10px] md:w-[11px]"
+    src="/icons/heart-empty.svg"
+    alt=""
+  />
+</button>
 
     <img
       class="absolute left-1/2 top-[14px] h-[132px] w-[146px] -translate-x-1/2 object-contain md:h-[152px] md:w-[168px]"
@@ -75,18 +90,18 @@ const categoryColor = categoryColors[categoryName] || 'bg-brand-green';
     />
   </div>
 
-  <!-- Text area -->
-  <div class="absolute bottom-0 left-0 h-[116px] w-full rounded-b-2xl bg-white px-[15px] pb-3 pt-[13px] md:h-[132px] md:px-[18px] md:pt-4">
-    <h3 class="line-clamp-1 text-[13px] font-bold leading-[16.25px] text-black md:text-[15px] md:leading-5">
+  <!-- TEXT -->
+  <div class="flex flex-1 flex-col bg-white px-[15px] pb-3 pt-[13px] md:px-[18px] md:pt-4">
+    <h3 class="line-clamp-2 min-h-[32px] text-[13px] font-bold leading-[16px] text-black md:min-h-[40px] md:text-[15px] md:leading-5">
       {boisson.nom_boisson}
     </h3>
 
-    <p class="mt-1.5 line-clamp-2 text-[11px] font-normal leading-[16.25px] text-brand-warmGray md:text-[13px] md:leading-[19px]">
-      {shortDescription}
+    <p class="mt-1.5 line-clamp-2 text-[11px] font-normal leading-[16px] text-brand-warmGray md:text-[13px] md:leading-[18px]">
+      {description}
     </p>
 
     <a
-      class="mt-[9px] flex items-center justify-between text-[12px] font-bold text-brand-turquoise no-underline md:text-[14px]"
+      class="mt-auto flex items-center justify-between pt-3 text-[12px] font-bold text-brand-turquoise no-underline md:text-[14px]"
       href={`/boissons/${boisson.slug}`}
     >
       <span>Voir la recette</span>
