@@ -1,0 +1,78 @@
+---
+const navLinks = [
+  { name: 'Accueil', href: '/' },
+  { name: 'À propos', href: '/about' },
+  { name: 'Boissons', href: '/drinks' },
+  { name: 'Contact', href: '/contact' },
+  { name: 'Conseils & articles', href: '/articles' },
+];
+
+const legalLinks = [
+  { name: 'Conditions générales d’utilisation', href: '/cgu' },
+  { name: 'Cookies', href: '/cookies' },
+  { name: 'Conditions d’utilisations et Mentions Légales', href: '/legal' },
+  { name: 'Politique de Confidentialité', href: '/privacy' },
+];
+---
+
+<footer class="w-full bg-[#00E9DD]">
+
+ 
+  <div class="w-full px-6 py-8 md:px-16 md:py-12">
+
+    <div class="flex flex-col md:grid md:grid-cols-3 gap-10">
+
+      <!-- (left) -->
+      <div>
+        <img src="/logo-black.svg" class="w-[43px] h-[44px] md:w-[60px] md:h-[60px]" />
+
+        <!-- nav -->
+        <nav class="mt-10 flex flex-col gap-4 md:gap-5">
+          {navLinks.map(link => (
+            <a href={link.href} class="text-black font-bold text-[12px] md:text-[14px] font-sans">
+              {link.name}
+            </a>
+          ))}
+        </nav>
+      </div>
+
+      <!-- (legal) -->
+      <div class="mt-8 md:mt-0">
+        <div class="flex flex-col gap-3 md:gap-4">
+          {legalLinks.map(link => (
+            <a href={link.href} class="text-gray-700 text-[12px] md:text-[13px] font-normal font-sans">
+              {link.name}
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <!-- (socials) -->
+      <div class="flex flex-col items-start md:items-end mt-8 md:mt-0">
+
+        <div class="flex flex-wrap justify-center md:justify-end gap-6">
+          <img src="/linkedIn.svg" class="w-7 h-7 md:w-8 md:h-8" />
+          <img src="/x.svg" class="w-7 h-7 md:w-8 md:h-8" />
+          <img src="/instagram.svg" class="w-7 h-7 md:w-8 md:h-8" />
+          <img src="/facebook.svg" class="w-7 h-7 md:w-8 md:h-8" />
+          <img src="/mail.svg" class="w-7 h-7 md:w-8 md:h-8" />
+        </div>
+
+      </div>
+
+    </div>
+
+  
+    <div class="mt-10 h-[0.5px] bg-gray-600 w-full"></div>
+
+    <!-- bottom -->
+    <div class="mt-6 flex flex-col md:flex-row md:justify-between md:items-center">
+
+      <p class="text-black text-[12px] md:text-[13px] font-light leading-[118.5%]">
+        © 2026 CupTail - Tous droits réservés
+      </p>
+
+    </div>
+
+  </div>
+</footer>

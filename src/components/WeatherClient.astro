@@ -1,0 +1,242 @@
+<section id="weather-section" class="w-full bg-white px-4 py-8">
+  <div class="mx-auto w-full max-w-[393px] overflow-hidden rounded-[32px] bg-hero p-5 shadow-panel md:max-w-5xl md:p-10">
+    <button id="city-button" class="relative z-20 mb-3 flex items-center gap-2 text-[13px] font-bold text-black md:text-[15px]">
+      <span>📍</span>
+      <span id="weather-city">Montbéliard</span>
+    </button>
+
+    <div class="relative min-h-[610px] md:min-h-[660px]">
+      <div class="relative z-30">
+        <div class="flex items-start justify-between md:max-w-[460px]">
+          <div>
+            <p id="weather-temp" class="text-[42px] font-black leading-none text-black md:text-[72px]">--°C</p>
+            <p id="weather-label" class="mt-2 text-[20px] font-bold text-black md:text-[28px]">Chargement...</p>
+            <p id="weather-message" class="mt-3 max-w-[245px] text-[14px] font-bold leading-6 text-neutral-400 md:max-w-[420px] md:text-[18px]">
+              On cherche la meilleure boisson...
+            </p>
+          </div>
+
+          <img id="weather-icon" class="h-16 w-16 animate-weather-float object-contain md:h-24 md:w-24" src="/icons/weather/sun.svg" alt="" />
+        </div>
+      </div>
+
+      <div class="absolute bottom-0 left-0 right-0 z-20">
+        <div class="relative">
+          <button id="weather-prev" class="absolute left-1 top-1/2 z-40 hidden h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-white shadow-button md:grid">
+            <img src="/icons/weather/arrow-left.svg" alt="" class="h-4 w-4" />
+          </button>
+
+          <div class="overflow-hidden">
+            <div id="weather-recommendations" class="flex touch-pan-y select-none transition-transform duration-500 ease-out">
+              <p class="p-5 text-sm font-bold text-neutral-500">Chargement des recommandations...</p>
+            </div>
+          </div>
+
+          <button id="weather-next" class="absolute right-1 top-1/2 z-40 hidden h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-white shadow-button md:grid">
+            <img src="/icons/weather/arrow-right.svg" alt="" class="h-4 w-4" />
+          </button>
+        </div>
+
+        <p class="mt-3 text-center text-[11px] font-bold text-neutral-400 md:hidden">
+          Fais glisser pour voir plus de recommandations
+        </p>
+
+        <div id="weather-dots" class="mt-3 flex justify-center gap-2"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="location-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 px-5">
+    <div class="w-full max-w-[340px] rounded-[28px] bg-white p-6 shadow-xl">
+      <h2 class="text-xl font-black text-black">Utiliser ta position ?</h2>
+
+      <p class="mt-3 text-sm leading-6 text-neutral-500">
+        On utilise ta localisation seulement pour proposer une boisson adaptée à la météo.
+      </p>
+
+      <div class="mt-5 flex flex-col gap-3">
+        <button id="allow-location" class="rounded-full bg-brand-turquoise px-5 py-3 text-sm font-black text-black shadow-button">
+          Utiliser ma position
+        </button>
+
+        <button id="deny-location" class="rounded-full bg-neutral-100 px-5 py-3 text-sm font-bold text-black">
+          Continuer avec Montbéliard
+        </button>
+      </div>
+
+      <div class="mt-5">
+        <label for="city-input" class="text-xs font-bold text-neutral-500">
+          Ou choisis une ville
+        </label>
+
+        <div class="mt-2 flex gap-2">
+          <input
+            id="city-input"
+            class="min-w-0 flex-1 rounded-full border border-neutral-200 px-4 py-2 text-sm outline-none"
+            type="text"
+            placeholder="Paris, Lyon..."
+          />
+
+          <button id="search-city" class="rounded-full bg-black px-4 py-2 text-sm font-bold text-white">
+            OK
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import {
+    DEFAULT_LOCATION,
+    saveLocation,
+    getSavedLocation,
+    getWeather,
+    getCityCoords,
+    getTemperatureBucket,
+    getWeatherContext,
+    getWeatherLabel,
+    getWeatherMessage,
+    getWeatherIcon,
+    getRecommendedBoissons,
+  } from '../scripts/weatherLogic.js';
+
+  import { renderWeatherCards } from '../scripts/WeatherCard.js';
+  import { createCarousel } from '../scripts/carousel.js';
+
+    function getElement(selector: string): Element {
+    const element = document.querySelector(selector);
+
+    if (!element) {
+      throw new Error(`WeatherClient: élément introuvable ${selector}`);
+    }
+
+    return element;
+  }
+
+  const section = getElement('#weather-section');
+  const cityButton = getElement('#city-button');
+  const modal = getElement('#location-modal');
+  const allowButton = getElement('#allow-location');
+  const denyButton = getElement('#deny-location');
+  const searchCityButton = getElement('#search-city');
+
+  const cityInput = getElement('#city-input') as HTMLInputElement;
+  const cityEl = getElement('#weather-city');
+  const tempEl = getElement('#weather-temp');
+  const labelEl = getElement('#weather-label');
+  const messageEl = getElement('#weather-message');
+  const iconEl = getElement('#weather-icon') as HTMLImageElement;
+  const recommendationsEl = getElement('#weather-recommendations') as HTMLElement;
+  const dotsEl = getElement('#weather-dots') as HTMLElement;
+  const prevButton = getElement('#weather-prev');
+  const nextButton = getElement('#weather-next');
+
+  const carousel = createCarousel({
+    track: recommendationsEl,
+    dots: dotsEl,
+    prevButton,
+    nextButton,
+    section,
+  });
+
+  function openModal() {
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  function closeModal() {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+
+  async function updateWeatherSection(location: { city: string; latitude: number; longitude: number }) {
+    cityEl.textContent = location.city;
+
+    const weather = await getWeather(location);
+    const context = getWeatherContext(weather);
+    const bucket = getTemperatureBucket(weather.temperature_2m);
+    const boissons = await getRecommendedBoissons(weather, context, bucket, location);
+
+    tempEl.textContent = `${Math.round(weather.temperature_2m)}°C`;
+    labelEl.textContent = getWeatherLabel(context, bucket);
+    messageEl.textContent = getWeatherMessage(context, bucket);
+    iconEl.src = getWeatherIcon(context);
+
+    if (!boissons.length) {
+      recommendationsEl.innerHTML = '<p class="p-5 text-sm font-bold text-neutral-500">Aucune boisson trouvée pour cette météo.</p>';
+      dotsEl.innerHTML = '';
+      return;
+    }
+
+    recommendationsEl.innerHTML = renderWeatherCards(boissons);
+    carousel.init(boissons.length);
+  }
+
+  function askBrowserLocation() {
+    if (!navigator.geolocation) {
+      updateWeatherSection(DEFAULT_LOCATION);
+      saveLocation(DEFAULT_LOCATION);
+      closeModal();
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const location = {
+          city: 'Ma position',
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        };
+
+        saveLocation(location);
+        closeModal();
+        await updateWeatherSection(location);
+      },
+      async () => {
+        saveLocation(DEFAULT_LOCATION);
+        closeModal();
+        await updateWeatherSection(DEFAULT_LOCATION);
+      },
+      {
+        enableHighAccuracy: false,
+        timeout: 7000,
+        maximumAge: 600000,
+      }
+    );
+  }
+
+  allowButton.addEventListener('click', askBrowserLocation);
+
+  denyButton.addEventListener('click', async () => {
+    saveLocation(DEFAULT_LOCATION);
+    closeModal();
+    await updateWeatherSection(DEFAULT_LOCATION);
+  });
+
+  searchCityButton.addEventListener('click', async () => {
+    const cityName = cityInput.value.trim();
+
+    if (!cityName) return;
+
+    try {
+      const location = await getCityCoords(cityName);
+      saveLocation(location);
+      closeModal();
+      await updateWeatherSection(location);
+    } catch (error) {
+      alert('Ville introuvable. Essaie une autre ville.');
+    }
+  });
+
+  cityButton.addEventListener('click', openModal);
+
+  const savedLocation = getSavedLocation();
+
+  if (savedLocation) {
+    updateWeatherSection(savedLocation);
+  } else {
+    openModal();
+    updateWeatherSection(DEFAULT_LOCATION);
+  }
+</script>

@@ -1,0 +1,49 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Connexion">
+  <section class="min-h-[calc(100vh-64px)] bg-white px-4 py-10">
+    <div class="mx-auto max-w-[420px] rounded-[28px] bg-mint p-6 shadow-card">
+      <h1 class="page-title">Connexion</h1>
+
+      <form id="login-form" class="mt-8 flex flex-col gap-4">
+        <input class="rounded-full bg-white px-5 py-3 shadow-soft outline-none" name="email" type="email" placeholder="Email" required />
+        <input class="rounded-full bg-white px-5 py-3 shadow-soft outline-none" name="password" type="password" placeholder="Mot de passe" required />
+
+        <button class="mt-4 rounded-full bg-brand-turquoise px-6 py-3 font-bold text-black shadow-button" type="submit">
+          Se connecter
+        </button>
+
+        <p id="login-message" class="text-sm font-bold"></p>
+      </form>
+
+      <a href="/register" class="mt-6 block text-center text-sm font-bold text-brand-turquoise">
+        Pas encore de compte ? S’inscrire
+      </a>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  import { loginUser } from '../backend/backend.js';
+
+  const form = document.querySelector('#login-form');
+  const message = document.querySelector('#login-message');
+
+  if (form instanceof HTMLFormElement && message instanceof HTMLElement) {
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData(form);
+
+      try {
+        await loginUser(formData.get('email'), formData.get('password'));
+        window.location.href = '/account';
+      } catch (error) {
+        message.textContent = 'Email ou mot de passe incorrect.';
+        message.className = 'text-sm font-bold text-brand-red';
+      }
+    });
+  }
+</script>

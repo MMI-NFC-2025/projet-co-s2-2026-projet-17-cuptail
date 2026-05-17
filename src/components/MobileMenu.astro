@@ -1,0 +1,150 @@
+---
+const primaryLinks = [
+  { name: 'Boissons', href: '/boissons', icon: '/drink.svg' },
+];
+
+const secondaryLinks = [
+  { name: 'Accueil', href: '/' },
+  { name: 'À propos', href: '/about' },
+  { name: 'Conseils & articles', href: '/articles' },
+  { name: 'Contact', href: '/contact' },
+];
+
+const accountLinks = [
+  { name: 'Mon compte', href: '/account', icon: '/icons/account/default-user.svg' },
+  { name: 'Favoris', href: '/account/favoris', icon: '/icons/heart.svg' },
+  { name: 'Historique', href: '/account/history', icon: '/icons/account/history.svg' },
+];
+---
+
+<div
+  id="mobile-menu"
+  class="fixed inset-0 z-[60] translate-x-full bg-brand-turquoise transition-transform duration-300 lg:hidden"
+>
+  <div class="flex h-full flex-col px-7 pb-8 pt-5">
+    <div class="flex h-[40px] items-center justify-between">
+      <a href="/" class="flex items-center gap-3">
+        <img src="/logo.svg" class="h-8 w-8" alt="Logo" />
+        <span class="text-[18px] font-bold text-[#410B2B]">Cuptail</span>
+      </a>
+
+      <button id="close-menu" class="grid h-[32px] w-[32px] place-items-center" aria-label="Fermer le menu">
+        <img src="/close.svg" class="h-5 w-5" alt="" />
+      </button>
+    </div>
+
+    <div id="mobile-user-zone" class="mt-8"></div>
+
+    <div class="mt-6 h-px w-full bg-white/50"></div>
+
+    <nav class="mt-8 flex flex-col gap-5">
+      {primaryLinks.map((link) => (
+        <a href={link.href} class="flex items-center gap-3 transition active:scale-95">
+          <div class="flex h-[21px] w-[21px] shrink-0 items-center justify-center rounded-md bg-white">
+            <img src={link.icon} class="h-[14px] w-[14px]" alt="" />
+          </div>
+
+          <span class="text-[20px] font-bold text-black">{link.name}</span>
+        </a>
+      ))}
+
+      <div class="h-px w-full bg-white/50"></div>
+
+      {secondaryLinks.map((link) => (
+        <a
+          href={link.href}
+          class="pl-[34px] text-[20px] font-bold text-black transition active:scale-95"
+        >
+          {link.name}
+        </a>
+      ))}
+
+      <div id="account-separator" class="hidden h-px w-full bg-white/50"></div>
+
+      <div id="mobile-account-links" class="hidden flex-col gap-5">
+        {accountLinks.map((link) => (
+          <a href={link.href} class="flex items-center gap-3 transition active:scale-95">
+            <div class="flex h-[21px] w-[21px] shrink-0 items-center justify-center rounded-md bg-white">
+              <img src={link.icon} class="h-[14px] w-[14px]" alt="" />
+            </div>
+
+            <span class="text-[20px] font-bold text-black">{link.name}</span>
+          </a>
+        ))}
+      </div>
+    </nav>
+
+    <button
+      id="mobile-logout"
+      class="mt-auto hidden text-center text-[20px] font-bold text-white"
+    >
+      Se déconnecter
+    </button>
+  </div>
+</div>
+
+<script>
+  import { pb, getCurrentUser, logoutUser } from '../backend/backend.js';
+
+  const menu = document.querySelector('#mobile-menu');
+  const openBtn = document.querySelector('#open-menu');
+  const closeBtn = document.querySelector('#close-menu');
+
+  const userZone = document.querySelector('#mobile-user-zone');
+  const accountLinks = document.querySelector('#mobile-account-links');
+  const accountSeparator = document.querySelector('#account-separator');
+  const logoutButton = document.querySelector('#mobile-logout');
+
+  openBtn?.addEventListener('click', () => {
+    menu?.classList.remove('translate-x-full');
+  });
+
+  closeBtn?.addEventListener('click', () => {
+    menu?.classList.add('translate-x-full');
+  });
+
+  const user = getCurrentUser();
+
+  if (!user && userZone) {
+    userZone.innerHTML = `
+      <div class="text-right">
+        <a href="/login" class="block text-[20px] font-bold text-white">
+          Se connecter
+        </a>
+        <a href="/register" class="mt-1 block text-sm font-bold text-white/80">
+          Créer un compte
+        </a>
+      </div>
+    `;
+  }
+
+  if (user && userZone) {
+    const avatarUrl = user.avatar ? pb.files.getURL(user, user.avatar) : null;
+    const initial = user.name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || '?';
+
+    userZone.innerHTML = `
+      <a href="/account" class="flex items-center justify-end gap-4 text-right">
+        <div>
+          <p class="text-[20px] font-bold text-white">${user.name || 'Utilisateur'}</p>
+          <p class="text-sm text-white/80">${user.email}</p>
+        </div>
+
+        ${
+          avatarUrl
+            ? `<img src="${avatarUrl}" class="h-12 w-12 rounded-full border-2 border-white object-cover" alt="">`
+            : `<div class="grid h-12 w-12 place-items-center rounded-full border-2 border-white bg-white text-xl font-black text-brand-turquoise">${initial}</div>`
+        }
+      </a>
+    `;
+
+    accountLinks?.classList.remove('hidden');
+    accountLinks?.classList.add('flex');
+    accountSeparator?.classList.remove('hidden');
+    logoutButton?.classList.remove('hidden');
+  }
+
+  logoutButton?.addEventListener('click', () => {
+    logoutUser();
+    window.location.href = '/login';
+  });
+</script>

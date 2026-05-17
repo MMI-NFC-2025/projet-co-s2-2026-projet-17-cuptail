@@ -1,0 +1,96 @@
+---
+import MobileMenu from './MobileMenu.astro';
+
+const navLinks = [
+  { name: 'Accueil', href: '/' },
+  { name: 'À propos', href: '/about' },
+  { name: 'Boissons', href: '/boissons' },
+  { name: 'Conseils & articles', href: '/articles' },
+  { name: 'Contact', href: '/contact' },
+];
+---
+
+<header class="relative z-50 w-full bg-spring">
+  <div class="flex h-[60px] w-full items-center justify-between px-4 md:h-[70px] md:px-10 lg:px-16">
+    <a href="/" class="flex items-center gap-3 transition hover:opacity-80">
+      <img src="/logo.svg" class="h-8 w-8 md:h-10 md:w-10" alt="Logo" />
+
+      <span class="text-[18px] font-bold text-[#410B2B] md:text-[20px]">
+        Cuptail
+      </span>
+    </a>
+
+    <nav class="hidden items-center gap-8 lg:flex">
+      {navLinks.map((link) => (
+        <a
+          href={link.href}
+          class="text-[15px] font-medium text-[#410B2B] transition hover:opacity-70"
+        >
+          {link.name}
+        </a>
+      ))}
+    </nav>
+
+    <div class="flex items-center gap-4">
+      <a
+        id="desktop-account-link"
+        href="/login"
+        class="hidden h-10 w-10 overflow-hidden rounded-full bg-white shadow-soft lg:grid lg:place-items-center"
+        aria-label="Compte"
+      >
+        <img
+          id="desktop-account-image"
+          src="/icons/account/default-user.svg"
+          class="h-full w-full object-cover"
+          alt=""
+        />
+
+        <span
+          id="desktop-account-initial"
+          class="hidden text-lg font-black text-brand-turquoise"
+        ></span>
+      </a>
+
+      <button
+        id="open-menu"
+        class="flex flex-col gap-[5px] lg:hidden"
+        aria-label="Ouvrir le menu"
+      >
+        <span class="h-[3px] w-[26px] rounded bg-[#410B2B]"></span>
+        <span class="h-[3px] w-[26px] rounded bg-[#410B2B]"></span>
+        <span class="h-[3px] w-[26px] rounded bg-[#410B2B]"></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<MobileMenu />
+
+<script>
+  import { pb, getCurrentUser } from '../backend/backend.js';
+
+  const accountLink = document.querySelector('#desktop-account-link') as HTMLAnchorElement | null;
+  const accountImage = document.querySelector('#desktop-account-image') as HTMLImageElement | null;
+  const accountInitial = document.querySelector('#desktop-account-initial') as HTMLSpanElement | null;
+
+  const user = getCurrentUser();
+
+  if (user && accountLink) {
+    accountLink.href = '/account';
+
+    if (user.avatar && accountImage) {
+      accountImage.src = pb.files.getURL(user, user.avatar);
+      accountImage.classList.remove('hidden');
+      accountInitial?.classList.add('hidden');
+    } else {
+      const initial = user.name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || '?';
+
+      accountImage?.classList.add('hidden');
+
+      if (accountInitial) {
+        accountInitial.textContent = initial;
+        accountInitial.classList.remove('hidden');
+      }
+    }
+  }
+</script>

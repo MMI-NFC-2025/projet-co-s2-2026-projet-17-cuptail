@@ -1,0 +1,153 @@
+@import './variables.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    background: #ffffff;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    overflow-x: hidden;
+    background: #ffffff;
+    font-family: "Google Sans", "Google Sans Text", Inter, Arial, sans-serif;
+    color: #000000;
+  }
+
+  @layer components {
+  .page-title {
+    @apply text-[26px] font-bold leading-normal text-black md:text-[42px];
+  }
+
+  .page-subtitle {
+    @apply text-[16px] font-normal italic leading-normal text-black md:text-[22px];
+  }
+
+  .section-title {
+    @apply text-[20px] font-bold leading-9 text-black md:text-[28px];
+  }
+}
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+}
+
+@layer components {
+  .weather-card-main {
+    position: relative;
+    border-radius: 28px;
+    background: white;
+    box-shadow: var(--shadow-card);
+    -webkit-mask-image: radial-gradient(58px at 100% 0, transparent 45px, #000 46px);
+    mask-image: radial-gradient(58px at 100% 0, transparent 45px, #000 46px);
+  }
+
+  .weather-card-back {
+    position: absolute;
+    right: 0;
+    top: -24px;
+    width: 132px;
+    height: 132px;
+    border-radius: 20px;
+    background: white;
+    box-shadow: var(--shadow-card);
+  }
+}
+
+@layer utilities {
+  @keyframes float-drop-1 {
+    0% {
+      transform: translate3d(0, -120px, 0) rotate(0deg);
+      opacity: 0;
+    }
+
+    18% {
+      opacity: 0.45;
+    }
+
+    100% {
+      transform: translate3d(24px, 110vh, 0) rotate(160deg);
+      opacity: 0.78;
+    }
+  }
+
+  @keyframes float-drop-2 {
+    0% {
+      transform: translate3d(0, -160px, 0) rotate(20deg);
+      opacity: 0;
+    }
+
+    20% {
+      opacity: 0.38;
+    }
+
+    100% {
+      transform: translate3d(-32px, 110vh, 0) rotate(-140deg);
+      opacity: 0.72;
+    }
+  }
+
+  @keyframes float-drop-3 {
+    0% {
+      transform: translate3d(0, -100px, 0) rotate(-15deg);
+      opacity: 0;
+    }
+
+    22% {
+      opacity: 0.42;
+    }
+
+    100% {
+      transform: translate3d(18px, 110vh, 0) rotate(120deg);
+      opacity: 0.75;
+    }
+  }
+
+  @keyframes weather-float {
+    0%,
+    100% {
+      transform: translateY(0) rotate(0deg);
+    }
+
+    50% {
+      transform: translateY(-5px) rotate(3deg);
+    }
+  }
+
+  .animate-drop-1 {
+    animation: float-drop-1 12s linear infinite;
+  }
+
+  .animate-drop-2 {
+    animation: float-drop-2 15s linear infinite;
+  }
+
+  .animate-drop-3 {
+    animation: float-drop-3 13s linear infinite;
+  }
+
+  .animate-weather-float {
+    animation: weather-float 4s ease-in-out infinite;
+  }
+}
+
+#quiz-section {
+  scroll-margin-top: 80px;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

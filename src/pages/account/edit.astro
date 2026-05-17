@@ -1,0 +1,131 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Modifier le profil">
+  <section class="min-h-[calc(100vh-64px)] bg-brand-paleGray px-4 py-8">
+    <div class="mx-auto max-w-[520px]">
+      <a href="/account" class="nav-link-brand">← Retour</a>
+
+      <h1 class="page-title mt-4">Modifier le profil</h1>
+
+      <div id="edit-profile-content" class="mt-8"></div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  import { pb, getCurrentUser, updateUserProfile } from '../../backend/backend.js';
+
+  const container = document.querySelector('#edit-profile-content');
+
+  if (container) {
+    const user = getCurrentUser();
+
+    if (!user) {
+      container.innerHTML = `
+        <div class="rounded-[28px] bg-white p-6 text-center shadow-card">
+          <h2 class="text-xl font-bold">Tu n’es pas connecté</h2>
+          <a href="/login" class="mt-6 inline-block rounded-full bg-brand-turquoise px-6 py-3 font-bold text-black shadow-button">
+            Se connecter
+          </a>
+        </div>
+      `;
+    } else {
+      const avatarUrl = user.avatar ? pb.files.getURL(user, user.avatar) : null;
+      const initial = user.name ? user.name[0].toUpperCase() : user.email[0].toUpperCase();
+
+      container.innerHTML = `
+        <form id="edit-profile-form" class="rounded-[28px] bg-mint p-6 shadow-card">
+          <div class="flex flex-col items-center">
+            <div id="avatar-preview" class="grid h-28 w-28 place-items-center overflow-hidden rounded-full border-4 border-white bg-brand-turquoise text-4xl font-black text-white shadow-soft">
+              ${
+                avatarUrl
+                  ? `<img src="${avatarUrl}" class="h-full w-full object-cover" alt="">`
+                  : initial
+              }
+            </div>
+
+            <label class="mt-5 rounded-full bg-white px-5 py-3 text-sm font-bold text-black shadow-button">
+              Changer la photo
+              <input id="avatar-input" name="avatar" type="file" accept="image/*" class="hidden" />
+            </label>
+          </div>
+
+          <div class="mt-8 flex flex-col gap-4">
+            <label class="text-sm font-bold text-black">
+              Nom
+              <input
+                name="name"
+                value="${user.name || ''}"
+                class="mt-2 w-full rounded-full bg-white px-5 py-3 text-black shadow-soft outline-none"
+                required
+              />
+            </label>
+
+            <label class="text-sm font-bold text-neutral-500">
+              Email
+              <input
+                value="${user.email}"
+                class="mt-2 w-full rounded-full bg-neutral-100 px-5 py-3 text-neutral-500 outline-none"
+                disabled
+              />
+            </label>
+
+            <button class="mt-4 rounded-full bg-brand-turquoise px-6 py-3 font-bold text-black shadow-button" type="submit">
+              Enregistrer
+            </button>
+
+            <p id="edit-message" class="text-sm font-bold"></p>
+          </div>
+        </form>
+      `;
+
+      const form = document.querySelector('#edit-profile-form');
+      const avatarInput = document.querySelector('#avatar-input');
+      const avatarPreview = document.querySelector('#avatar-preview');
+      const message = document.querySelector('#edit-message');
+
+      if (
+        form instanceof HTMLFormElement &&
+        avatarInput instanceof HTMLInputElement &&
+        avatarPreview instanceof HTMLElement &&
+        message instanceof HTMLElement
+      ) {
+        avatarInput.addEventListener('change', () => {
+          const file = avatarInput.files?.[0];
+          if (!file) return;
+
+          const imageUrl = URL.createObjectURL(file);
+
+          avatarPreview.innerHTML = `
+            <img src="${imageUrl}" class="h-full w-full object-cover" alt="">
+          `;
+        });
+
+        form.addEventListener('submit', async (event) => {
+          event.preventDefault();
+
+          const formData = new FormData(form);
+
+          try {
+            await updateUserProfile(user.id, {
+              name: formData.get('name'),
+              avatar: avatarInput.files?.[0],
+            });
+
+            message.textContent = 'Profil mis à jour.';
+            message.className = 'text-sm font-bold text-brand-turquoise';
+
+            setTimeout(() => {
+              window.location.href = '/account';
+            }, 900);
+          } catch (error) {
+            message.textContent = 'Erreur pendant la modification.';
+            message.className = 'text-sm font-bold text-brand-red';
+          }
+        });
+      }
+    }
+  }
+</script>

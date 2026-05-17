@@ -1,0 +1,151 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Mon compte">
+  <section class="min-h-[calc(100vh-64px)] bg-brand-paleGray px-4 py-8">
+    <div class="mx-auto max-w-5xl">
+      <h1 class="page-title mb-8">Mon compte</h1>
+
+      <div id="account-content"></div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  import { pb, getCurrentUser, getFileUrl, logoutUser, deleteUserAccount } from '../backend/backend.js';
+
+const container = document.querySelector('#account-content');
+
+if (!(container instanceof HTMLElement)) {
+  throw new Error('Account container not found');
+}
+
+const user = getCurrentUser();
+
+if (!user) {
+
+    container.innerHTML = `
+      <div class="rounded-[28px] bg-white p-6 text-center shadow-card">
+        <img src="/icons/account/default-user.svg" class="mx-auto h-20 w-20" alt="" />
+        <h2 class="mt-4 text-xl font-bold">Tu n’es pas connecté</h2>
+        <p class="mt-2 text-sm text-neutral-500">Connecte-toi pour accéder à tes favoris et ton historique.</p>
+        <div class="mt-6 flex justify-center gap-3">
+          <a href="/login" class="rounded-full bg-brand-turquoise px-5 py-3 font-bold text-black shadow-button">Connexion</a>
+          <a href="/register" class="rounded-full bg-white px-5 py-3 font-bold text-black shadow-button">Inscription</a>
+        </div>
+      </div>
+    `;
+  } else {
+    const avatarUrl = user.avatar ? pb.files.getURL(user, user.avatar) : null;
+    const initial = user.name ? user.name[0].toUpperCase() : user.email[0].toUpperCase();
+
+    container.innerHTML = `
+      <div class="grid gap-6 lg:grid-cols-[380px_1fr] lg:items-start">
+        <article class="rounded-[28px] bg-spring p-5 shadow-card">
+          <div class="flex items-center gap-5">
+            ${
+              avatarUrl
+                ? `<img src="${avatarUrl}" class="h-20 w-20 rounded-full border-4 border-white object-cover" alt="">`
+                : `<div class="grid h-20 w-20 place-items-center rounded-full border-4 border-white bg-brand-turquoise text-3xl font-black text-white">${initial}</div>`
+            }
+
+            <div>
+              <h2 class="text-2xl font-bold text-black">${user.name || 'Utilisateur'}</h2>
+              <p class="mt-2 text-sm text-neutral-500">${user.email}</p>
+            </div>
+          </div>
+
+          <a href="/account/edit" class="mt-8 block rounded-full bg-white py-3 text-center font-bold text-black shadow-button">
+            Modifier le profil
+          </a>
+        </article>
+
+        <div class="flex flex-col gap-6">
+          <div class="overflow-hidden rounded-[24px] bg-white shadow-soft">
+            <h2 class="border-b border-neutral-100 p-5 text-lg font-bold">Mes activités</h2>
+
+            <a href="/account/favoris" class="flex items-center justify-between border-b border-neutral-100 p-5">
+              <span class="flex items-center gap-4 font-bold">
+                <img src="/icons/account/heart.svg" class="h-7 w-7" alt="">
+                Mes favoris
+              </span>
+              <img src="/icons/arrow-right.svg" class="h-4 w-4" alt="">
+            </a>
+
+            <a href="/account/history" class="flex items-center justify-between p-5">
+              <span class="flex items-center gap-4 font-bold">
+                <img src="/icons/account/history.svg" class="h-7 w-7" alt="">
+                Historique
+              </span>
+              <img src="/icons/arrow-right.svg" class="h-4 w-4" alt="">
+            </a>
+          </div>
+
+          <div class="overflow-hidden rounded-[24px] bg-white shadow-soft">
+            <h2 class="border-b border-neutral-100 p-5 text-lg font-bold">Paramètres</h2>
+
+            <a href="/account/settings" class="flex items-center justify-between border-b border-neutral-100 p-5">
+              <span class="flex items-center gap-4">
+                <img src="/icons/account/settings.svg" class="h-7 w-7" alt="">
+                <span>
+                  <span class="block font-bold">Paramètres du compte</span>
+                  <span class="text-sm text-neutral-400">Notifications, confidentialité</span>
+                </span>
+              </span>
+              <img src="/icons/arrow-right.svg" class="h-4 w-4" alt="">
+            </a>
+
+            <a href="/contact" class="flex items-center justify-between p-5">
+              <span class="flex items-center gap-4">
+                <img src="/icons/account/help.svg" class="h-7 w-7" alt="">
+                <span>
+                  <span class="block font-bold">Aide et support</span>
+                  <span class="text-sm text-neutral-400">FAQ, contact</span>
+                </span>
+              </span>
+              <img src="/icons/arrow-right.svg" class="h-4 w-4" alt="">
+            </a>
+          </div>
+
+          <div class="overflow-hidden rounded-[24px] bg-white shadow-soft">
+            <button id="logout-button" class="flex w-full items-center gap-4 border-b border-neutral-100 p-5 text-left font-bold">
+              <img src="/icons/account/logout.svg" class="h-7 w-7" alt="">
+              Se déconnecter
+            </button>
+
+            <button id="delete-button" class="flex w-full items-center gap-4 p-5 text-left font-bold text-brand-red">
+              <img src="/icons/account/trash.svg" class="h-7 w-7" alt="">
+              Supprimer mon compte
+            </button>
+          </div>
+
+          <p class="pb-8 text-center text-xs text-neutral-400">Version 1.0.0</p>
+        </div>
+      </div>
+    `;
+  
+
+    const logoutButton = document.querySelector('#logout-button');
+
+if (logoutButton instanceof HTMLButtonElement) {
+  logoutButton.addEventListener('click', () => {
+      logoutUser();
+      window.location.href = '/login';
+    });
+    }
+    const deleteButton = document.querySelector('#delete-button');
+
+    if (deleteButton instanceof HTMLButtonElement) {
+      deleteButton.addEventListener('click', async () => {
+      const confirmDelete = confirm('Supprimer ton compte définitivement ?');
+
+      if (!confirmDelete) return;
+
+      await deleteUserAccount(user.id);
+      logoutUser();
+      window.location.href = '/register';
+    });
+    }
+    }
+</script>

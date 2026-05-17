@@ -1,0 +1,32 @@
+---
+import Layout from '../layouts/Layout.astro';
+import DrinksCatalog from '../components/DrinksCatalog.astro';
+import { getBoissons, getCategories } from '../backend/backend.js';
+
+const boissons = await getBoissons();
+const categories = await getCategories();
+
+const initialTemperature = Astro.url.searchParams.get('temperature') || '';
+const initialCategorie = Astro.url.searchParams.get('categorie') || '';
+---
+
+<Layout title="Toutes les boissons">
+  <section class="min-h-[calc(100vh-64px)] bg-brand-paleGray px-4 py-8">
+    <div class="mx-auto max-w-6xl">
+      <div class="mb-8">
+        <h1 class="page-title">Toutes les boissons</h1>
+
+        <p class="page-subtitle mt-3">
+          Explore toutes nos recettes et trouve la boisson qui correspond à ton envie.
+        </p>
+      </div>
+
+      <DrinksCatalog
+        boissons={boissons}
+        categories={categories}
+        initialTemperature={initialTemperature}
+        initialCategorie={initialCategorie}
+      />
+    </div>
+  </section>
+</Layout>
