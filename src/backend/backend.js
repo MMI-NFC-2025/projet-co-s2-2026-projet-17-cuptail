@@ -186,3 +186,92 @@ export async function deleteUserAccount(userId) {
   return await pb.collection('users').delete(userId);
 }
 
+export async function getArticles() {
+  const articles = await pb.collection('articles').getFullList({
+    sort: '-created',
+    filter: 'is_active = true',
+  });
+
+  return articles;
+}
+
+export async function getFeaturedArticles() {
+  const articles = await pb.collection('articles').getFullList({
+    sort: '-created',
+    filter: 'is_active = true && is_featured = true',
+  });
+
+  return articles;
+}
+
+export async function getArticleBySlug(slug) {
+  const article = await pb
+    .collection('articles')
+    .getFirstListItem(`slug = "${slug}" && is_active = true`);
+
+  return article;
+}
+
+export async function getUserHistory() {
+  if (!pb.authStore.isValid || !pb.authStore.model) {
+    return [];
+  }
+
+  return await pb.collection('historique_recettes').getFullList({
+    filter: `user = "${pb.authStore.model.id}"`,
+    sort: '-viewed_at',
+    expand: 'boisson,boisson.categories',
+  });
+}
+
+export async function deleteHistoryItem(historyId) {
+  return await pb.collection('historique_recettes').delete(historyId);
+}
+
+export async function clearUserHistory() {
+  const history = await getUserHistory();
+
+  await Promise.all(
+    history.map((item) =>
+      pb.collection('historique_recettes').delete(item.id)
+    )
+  );
+}
+
+export async function addRecipeToHistory(boissonId) {
+  if (!pb.authStore.isValid || !pb.authStore.model || !boissonId) {
+    return null;
+  }
+
+  const userId = pb.authStore.model.id;
+
+  try {
+    const existing = await pb
+      .collection('historique_recettes')
+      .getFirstListItem(`user = "${userId}" && boisson = "${boissonId}"`);
+
+    return await pb.collection('historique_recettes').update(existing.id, {
+      view_count: (existing.view_count || 1) + 1,
+      viewed_at: new Date().toISOString(),
+    });
+  } catch {
+    return await pb.collection('historique_recettes').create({
+      user: userId,
+      boisson: boissonId,
+      view_count: 1,
+      viewed_at: new Date().toISOString(),
+    });
+  }
+}
+
+export async function getBoissonBySlug(slug) {
+  return await pb.collection('boissons').getFirstListItem(`slug="${slug}"`, {
+    expand: 'categories',
+  });
+}
+
+export async function getBoissonSlugs() {
+  return await pb.collection('boissons').getFullList({
+    fields: 'slug',
+  });
+}

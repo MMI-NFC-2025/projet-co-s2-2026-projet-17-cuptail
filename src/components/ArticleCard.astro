@@ -1,0 +1,78 @@
+---
+import { getFileUrl } from '../backend/backend.js';
+
+const { article, variant = 'carousel' } = Astro.props;
+
+const cardClass =
+  variant === 'grid'
+    ? 'article-card overflow-hidden rounded-[24px] bg-white shadow-card'
+    : 'article-card w-[300px] shrink-0 overflow-hidden rounded-[24px] bg-white shadow-card md:w-[340px]';
+
+const imageUrl = article.image
+  ? getFileUrl(article, article.image)
+  : '/images/placeholder-drink.png';
+
+function formatDate(date: string) {
+  if (!date) return '';
+
+  const parsedDate = new Date(date);
+  if (Number.isNaN(parsedDate.getTime())) return '';
+
+  return parsedDate.toLocaleDateString('fr-FR');
+}
+---
+
+<article
+  class={cardClass}
+  data-category={String(article.categorie || article.badge_1 || '').toLowerCase()}
+>
+  <div class="relative h-[188px] md:h-[220px]">
+    <img
+      src={imageUrl}
+      alt={article.titre}
+      class="h-full w-full object-cover"
+      loading="lazy"
+    />
+
+    <div class="absolute left-4 top-3 flex gap-2">
+      {article.badge_1 && (
+        <span class="rounded-full bg-white/80 px-3 py-1 text-xs font-bold text-black">
+          {article.badge_1}
+        </span>
+      )}
+
+      {article.badge_2 && (
+        <span class="rounded-full bg-white/80 px-3 py-1 text-xs font-bold text-black">
+          {article.badge_2}
+        </span>
+      )}
+    </div>
+
+    <span class="absolute right-4 top-3 inline-flex items-center gap-1 rounded-full bg-white/80 px-3 py-1 text-xs font-bold text-black">
+      <img src="/icons/clock.svg" class="h-3.5 w-3.5" alt="" />
+      {article.temps_lecture}
+    </span>
+  </div>
+
+  <div class="p-6">
+    <p class="text-sm italic text-neutral-400">
+      {formatDate(article.created)}
+    </p>
+
+    <h2 class="mt-4 line-clamp-2 text-[22px] font-bold leading-tight text-black">
+      {article.titre_court || article.titre}
+    </h2>
+
+    <p class="mt-3 line-clamp-3 text-[16px] italic leading-6 text-black">
+      {article.description_courte}
+    </p>
+
+    <a
+      href={`/articles/${article.slug}`}
+      class="mt-5 inline-flex items-center gap-4 text-[16px] font-bold text-brand-turquoise"
+    >
+      Lire l’article
+      <img src="/icons/arrow-right.svg" class="h-4 w-4" alt="" />
+    </a>
+  </div>
+</article>
