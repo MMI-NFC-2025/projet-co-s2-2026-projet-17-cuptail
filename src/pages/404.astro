@@ -1,0 +1,32 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="404 - Page non trouvée" description="La page que vous cherchez n'existe pas.">
+  <section class="flex min-h-screen w-full items-center justify-center bg-white px-6 py-20">
+    <div class="mx-auto max-w-2xl text-center">
+      <h1 class="text-[80px] font-black text-brand-turquoise md:text-[120px]">404</h1>
+      
+      <h2 class="mt-6 text-[32px] font-bold text-black md:text-[42px]">
+        Oups ! Page non trouvée
+      </h2>
+      
+      <p class="mt-4 text-[16px] text-gray-600 md:text-[18px]">
+        Désolé, la page que vous cherchez n'existe pas ou a été déplacée.
+      </p>
+      
+      <div class="mt-10 flex flex-col gap-4 sm:flex-row justify-center">
+        <a href="/" class="rounded-full bg-brand-turquoise px-10 py-4 text-center text-[16px] font-bold text-black shadow-button transition hover:scale-105 active:scale-95">
+          Retourner à l'accueil
+        </a>
+        <a href="/boissons" class="rounded-full border-2 border-brand-turquoise bg-white px-10 py-4 text-center text-[16px] font-bold text-black transition hover:bg-black/5 active:scale-95">
+          Découvrir les boissons
+        </a>
+      </div>
+
+      <div class="mt-20">
+        <img src="/icons/weather/sun.svg" alt="" class="mx-auto h-24 w-24 opacity-50" />
+      </div>
+    </div>
+  </section>
+</Layout>

@@ -17,6 +17,6 @@
 | Étudiants    | Prénom NOM  |
 | :----------- | :---------- |
 | Étudiant 1   | Ruslana BUDNIAK |
-| Étudiant 2   | à compléter |
+| Étudiant 2   | Maman Thilor SAMBE
 | Étudiant 3   | à compléter |
-| (Étudiant 4) | à compléter |
+
