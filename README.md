@@ -10,7 +10,7 @@
 - [ ] Identifiant de connexion au backoffice : mamansambe47@gmail.com
 - [ ] Mot de passe de connexion au backoffice : Pocketbase@Cuptail
 - [ ] URL de la maquette FIGMA : https://www.figma.com/design/8X3cWZv9a4LTJKh9ZQLVIi/Cuptail?node-id=1097-2&t=poKEQbTT56idDJHd-1 
-- [ ] Description du projet :
+- [ ] Description du projet : Une application web de recommandation de boissons personnalisées selon la météo, les préférences et les envies de l’utilisateur.
 
 ## 🚀 Équipe
 

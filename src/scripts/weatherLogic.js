@@ -71,32 +71,45 @@ export function getWeatherContext(weather) {
   const code = weather.weather_code;
   const wind = weather.wind_speed_10m;
 
-  if (precipitation > 0 || rain > 0 || [51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code)) return 'pluie';
+  if ([95, 96, 99].includes(code)) return 'orage';
+  if ([71, 73, 75, 77, 85, 86].includes(code)) return 'neige';
+  if (precipitation > 0 || rain > 0 || [51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82].includes(code)) return 'pluie';
+  if ([45, 48].includes(code)) return 'brouillard';
   if (wind >= 35) return 'vent';
-  if (temperature >= 24) return 'chaud';
-  if (temperature <= 10) return 'froid';
+  if (temperature >= 30) return 'tres_chaud';
+  if (temperature <= 0) return 'tres_froid';
   if ([0, 1].includes(code)) return 'soleil';
-  if ([2, 3, 45, 48].includes(code)) return 'nuageux';
+  if (code === 2) return 'partiellement_nuageux';
+  if (code === 3) return 'nuageux';
 
   return 'normal';
 }
 
 export function getWeatherLabel(context, bucket) {
+  const labels = {
+    orage: 'Orageux',
+    neige: 'Neigeux',
+    pluie: 'Pluvieux',
+    brouillard: 'Brumeux',
+    vent: 'Venteux',
+    tres_chaud: 'Très chaud',
+    tres_froid: 'Très froid',
+    soleil: 'Ensoleillé',
+    partiellement_nuageux: 'Éclaircies',
+    nuageux: 'Nuageux',
+    normal: 'Doux',
+  };
+
+  if (labels[context]) return labels[context];
+
   if (bucket === 'tres_chaud') return 'Très chaud';
   if (bucket === 'chaud') return 'Chaud';
-  if (bucket === 'doux_chaud') return 'Ensoleillé';
+  if (bucket === 'doux_chaud') return 'Doux et lumineux';
   if (bucket === 'doux') return 'Doux';
   if (bucket === 'froid') return 'Frais';
   if (bucket === 'tres_froid') return 'Très froid';
 
-  const labels = {
-    pluie: 'Pluvieux',
-    nuageux: 'Nuageux',
-    vent: 'Venteux',
-    normal: 'Doux',
-  };
-
-  return labels[context] || 'Doux';
+  return 'Doux';
 }
 
 export function getWeatherMessage(context, bucket) {
@@ -117,18 +130,21 @@ export function getWeatherMessage(context, bucket) {
   return messages[context] || messages.normal;
 }
 
-export function getWeatherIcon(context) {
-  const icons = {
-    chaud: '/icons/weather/sun.svg',
-    soleil: '/icons/weather/sun.svg',
-    froid: '/icons/weather/cold.svg',
-    pluie: '/icons/weather/rain.svg',
-    nuageux: '/icons/weather/cloud.svg',
-    vent: '/icons/weather/wind.svg',
-    normal: '/icons/weather/sun.svg',
-  };
+export function getWeatherIcon(context, bucket, isDay = 1) {
+  const day = Number(isDay) === 1;
 
-  return icons[context] || icons.normal;
+  if (context === 'orage') return day ? '/icons/weather/thunder.svg' : '/icons/weather/thunder-night.svg';
+  if (context === 'neige') return day ? '/icons/weather/snow.svg' : '/icons/weather/snow-night.svg';
+  if (context === 'pluie') return day ? '/icons/weather/rain.svg' : '/icons/weather/rain-night.svg';
+  if (context === 'brouillard') return day ? '/icons/weather/fog.svg' : '/icons/weather/fog-night.svg';
+  if (context === 'vent') return day ? '/icons/weather/wind.svg' : '/icons/weather/wind-night.svg';
+  if (context === 'tres_chaud' || bucket === 'tres_chaud') return '/icons/weather/hot.svg';
+  if (context === 'tres_froid' || bucket === 'tres_froid') return '/icons/weather/very-cold.svg';
+  if (context === 'partiellement_nuageux') return day ? '/icons/weather/sun-cloud.svg' : '/icons/weather/moon-cloud.svg';
+  if (context === 'nuageux') return '/icons/weather/cloud.svg';
+  if (context === 'soleil') return day ? '/icons/weather/sun.svg' : '/icons/weather/moon.svg';
+
+  return day ? '/icons/weather/sun-cloud.svg' : '/icons/weather/moon-cloud.svg';
 }
 
 export async function getAllActiveBoissons() {

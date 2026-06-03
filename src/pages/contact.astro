@@ -3,7 +3,162 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout title="Contact">
-  <section class="min-h-[calc(100vh-64px)] bg-white px-4 py-8">
-    <h1 class="page-title">Contact</h1>
+  <section class="min-h-[calc(100vh-64px)] bg-white px-4 py-8 md:bg-mint md:py-14">
+    <div class="mx-auto max-w-6xl">
+      <div class="grid gap-10 lg:grid-cols-[1fr_420px] lg:items-start">
+        <div>
+          <div class="mb-10">
+            <h1 class="page-title">Contactez-nous</h1>
+
+            <p class="page-subtitle mt-4 max-w-[360px]">
+              Une question, une suggestion ?
+              <span class="text-[var(--color-turquoise-dark)]">
+                Écrivez-nous, nous vous répondrons rapidement.
+              </span>
+            </p>
+          </div>
+
+          <form
+            class="rounded-[10px] bg-mint p-4 shadow-none md:rounded-[28px] md:p-8 md:shadow-card"
+            action="mailto:contact.effetdetilde@gmail.com"
+            method="post"
+            enctype="text/plain"
+          >
+            <div class="space-y-4">
+              <label class="block">
+                <span class="mb-2 block text-[14px] font-bold text-black">Nom*</span>
+                <input
+                  class="contact-field"
+                  type="text"
+                  name="nom"
+                  placeholder="Exemple : Marie"
+                  required
+                />
+              </label>
+
+              <label class="block">
+                <span class="mb-2 block text-[14px] font-bold text-black">Email*</span>
+                <input
+                  class="contact-field"
+                  type="email"
+                  name="email"
+                  placeholder="votre@email.com"
+                  required
+                />
+              </label>
+
+              <label class="block">
+                <span class="mb-2 block text-[14px] font-bold text-black">Sujet*</span>
+                <select class="contact-field appearance-none bg-white" name="sujet" required>
+                  <option>Question générale</option>
+                  <option>Problème avec mon compte</option>
+                  <option>Suggestion de boisson</option>
+                  <option>Question sur une recette</option>
+                  <option>Autre demande</option>
+                </select>
+              </label>
+
+              <label class="block">
+                <textarea
+                  class="contact-field min-h-[150px] resize-none pt-5 md:min-h-[190px]"
+                  name="message"
+                  placeholder="Votre message..."
+                  required
+                ></textarea>
+              </label>
+            </div>
+
+            <div class="mt-8 flex justify-center">
+              <button
+                class="inline-flex w-full max-w-[240px] items-center justify-center gap-5 rounded-full bg-brand-turquoise px-8 py-3 text-[15px] font-bold text-black shadow-button transition hover:scale-105 active:scale-95"
+                type="submit"
+              >
+                Envoyer
+                <img src="/icons/send.svg" class="h-4 w-4" alt="" />
+              </button>
+            </div>
+          </form>
+
+          <p class="mt-4 text-[10px] text-black">
+            * Nous utilisons vos informations uniquement pour répondre à votre message.
+          </p>
+        </div>
+
+        <aside class="rounded-[24px] bg-white shadow-card md:mt-20">
+          <h2 class="border-b border-neutral-100 px-5 py-5 text-[18px] font-bold text-black">
+            Questions fréquentes
+          </h2>
+
+          <div class="divide-y divide-neutral-100">
+            <details class="group px-5 py-5" open>
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-[15px] font-bold text-black">
+                Quel est le délai de réponse ?
+                <span class="text-brand-turquoise transition group-open:rotate-90">›</span>
+              </summary>
+
+              <p class="mt-3 text-[13px] leading-5 text-brand-warmGray">
+                Nous répondons généralement sous 24 à 48 heures ouvrées.
+              </p>
+            </details>
+
+            <details class="group px-5 py-5">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-[15px] font-bold text-black">
+                Puis-je proposer une nouvelle boisson ?
+                <span class="text-brand-turquoise transition group-open:rotate-90">›</span>
+              </summary>
+
+              <p class="mt-3 text-[13px] leading-5 text-brand-warmGray">
+                Oui, vous pouvez nous envoyer une idée de boisson, une recette ou une suggestion d’ingrédient.
+              </p>
+            </details>
+
+            <details class="group px-5 py-5">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-[15px] font-bold text-black">
+                Les recommandations météo sont-elles automatiques ?
+                <span class="text-brand-turquoise transition group-open:rotate-90">›</span>
+              </summary>
+
+              <p class="mt-3 text-[13px] leading-5 text-brand-warmGray">
+                Oui, elles s’adaptent à la température, à la pluie et aux conditions météo disponibles.
+              </p>
+            </details>
+
+            <details class="group px-5 py-5">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-[15px] font-bold text-black">
+                Dois-je créer un compte pour utiliser le site ?
+                <span class="text-brand-turquoise transition group-open:rotate-90">›</span>
+              </summary>
+
+              <p class="mt-3 text-[13px] leading-5 text-brand-warmGray">
+                Non, vous pouvez explorer les boissons sans compte. Le compte sert surtout à garder vos favoris.
+              </p>
+            </details>
+          </div>
+        </aside>
+      </div>
+    </div>
   </section>
 </Layout>
+
+<style>
+  .contact-field {
+    width: 100%;
+    border-radius: 8px;
+    border: 2px solid var(--color-turquoise);
+    background: white;
+    padding: 1rem;
+    font-size: 14px;
+    font-weight: 500;
+    color: black;
+    outline: none;
+  }
+
+  .contact-field:focus {
+    border-color: var(--color-turquoise-dark);
+    box-shadow: 0 0 0 3px rgba(60, 238, 223, 0.18);
+  }
+
+  .contact-field::placeholder {
+    color: #444;
+  }
+</style>

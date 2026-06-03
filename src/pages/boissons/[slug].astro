@@ -1,0 +1,241 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getBoissonBySlug, getBoissonSlugs, getFileUrl } from '../../backend/backend.js';
+
+export async function getStaticPaths() {
+  const boissons = await getBoissonSlugs();
+  return boissons.map((boisson) => ({ params: { slug: boisson.slug } }));
+}
+
+const { slug } = Astro.params;
+const boisson = await getBoissonBySlug(slug);
+
+const imageUrl = boisson.photo_boisson ? getFileUrl(boisson, Array.isArray(boisson.photo_boisson) ? boisson.photo_boisson[0] : boisson.photo_boisson) : '/images/placeholder-drink.png';
+
+const expandedCategory = Array.isArray(boisson.expand?.categories) ? boisson.expand.categories[0] : boisson.expand?.categories;
+const categoryName = expandedCategory?.nom_categorie || expandedCategory?.categories_boissons || 'Boisson';
+
+function splitLines(value: string | null | undefined) {
+  if (!value) return [];
+  return String(value).split('\n').map((item) => item.trim()).filter(Boolean);
+}
+
+const ingredients = splitLines(boisson.ingredients_boisson);
+const preparation = splitLines(boisson.preparation_boisson);
+const conseils = splitLines(boisson.conseils_boisson);
+const bienfaits = splitLines(boisson.bienfaits_boisson);
+---
+
+<Layout title={boisson.nom_boisson}>
+  <main class="relative overflow-hidden bg-white">
+    <section class="relative px-4 pb-12 pt-6 md:px-6 md:pb-16 md:pt-10">
+      <div class="pointer-events-none absolute inset-x-0 top-0 h-[360px] bg-[radial-gradient(circle_at_50%_10%,rgba(60,238,223,0.22),transparent_35%),linear-gradient(180deg,#F7FFF4_0%,#FFFFFF_100%)]"></div>
+
+      <div class="relative z-10 mx-auto max-w-6xl">
+        <div class="mb-6 flex items-center justify-between">
+          <a href="/boissons" class="grid h-11 w-11 place-items-center rounded-full bg-white shadow-soft transition hover:scale-105" aria-label="Retour">
+            <img src="/icons/recipe/back.svg" class="h-5 w-5" alt="" />
+          </a>
+
+          <span class="rounded-full bg-[#D9FFD4] px-5 py-2 text-sm font-bold text-[var(--color-turquoise-dark)]">
+            {categoryName}
+          </span>
+        </div>
+
+        <div class="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+          <div class="relative mx-auto flex h-[300px] w-full max-w-[420px] items-center justify-center md:h-[390px] lg:h-[480px]">
+            <div class="absolute h-[230px] w-[230px] rounded-full bg-brand-turquoise/20 blur-3xl md:h-[320px] md:w-[320px]"></div>
+            <div class="absolute h-[190px] w-[190px] rounded-full bg-[#FFD04D]/20 blur-3xl md:h-[260px] md:w-[260px]"></div>
+
+            <span class="recipe-sparkle left-[18%] top-[18%]"></span>
+            <span class="recipe-sparkle right-[16%] top-[24%] [animation-delay:.6s]"></span>
+            <span class="recipe-sparkle bottom-[20%] left-[24%] [animation-delay:1.1s]"></span>
+
+            <img src={imageUrl} alt={boisson.nom_boisson} class="relative z-10 max-h-[280px] w-full object-contain drop-shadow-[0_24px_30px_rgba(0,0,0,0.18)] md:max-h-[360px] lg:max-h-[430px]" />
+          </div>
+
+          <div>
+            <h1 class="text-[32px] font-black leading-tight text-black md:text-[52px]">
+              {boisson.nom_boisson}
+            </h1>
+
+            <p class="mt-5 max-w-2xl text-[17px] leading-7 text-black/75 md:text-[21px] md:leading-8">
+              {boisson.description_longue || boisson.description_courte}
+            </p>
+
+            <div class="mt-8 grid grid-cols-3 gap-4 text-center md:max-w-xl">
+              <div class="rounded-2xl bg-white p-4 shadow-soft">
+                <img src="/icons/recipe/clock.svg" class="mx-auto h-5 w-5" alt="" />
+                <p class="mt-2 text-sm font-bold text-black">{boisson.temps_preparation || 5} min</p>
+              </div>
+
+              <div class="rounded-2xl bg-white p-4 shadow-soft">
+                <img src="/icons/weather/level.svg" class="mx-auto h-5 w-5" alt="" />
+                <p class="mt-2 text-sm font-bold text-black">{boisson.difficulte || 'Facile'}</p>
+              </div>
+
+              <div class="rounded-2xl bg-white p-4 shadow-soft">
+                <img src="/icons/weather/vegan.svg" class="mx-auto h-5 w-5" alt="" />
+                <p class="mt-2 text-sm font-bold text-black">{boisson.is_vegan ? 'Vegan' : 'Non vegan'}</p>
+              </div>
+            </div>
+
+            <div class="mt-6 flex flex-wrap gap-4">
+              <span class="rounded-full bg-[#C3FFAD] px-5 py-3 text-sm font-bold text-black">
+                Caféine <em class="ml-2 font-medium text-[var(--color-turquoise-dark)]">{boisson.taux_cafeine || 'Moyenne'}</em>
+              </span>
+
+              <span class="rounded-full bg-[#C3FFAD] px-5 py-3 text-sm font-bold text-black">
+                Sucre <em class="ml-2 font-medium text-[var(--color-turquoise-dark)]">{boisson.taux_sucre || 'Moyen'}</em>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-12 grid gap-12 lg:grid-cols-[1fr_0.9fr] lg:items-start">
+          <div class="space-y-12">
+            <section>
+              <h2 class="text-[24px] font-black text-brand-red md:text-[30px]">Ingrédients</h2>
+
+              <div class="mt-6 rounded-[28px] bg-white p-6 shadow-card md:p-8">
+                {ingredients.length ? (
+                  <ul class="space-y-3 text-[17px] leading-7 text-black md:text-[19px]">
+                    {ingredients.map((item) => <li set:html={item}></li>)}
+                  </ul>
+                ) : (
+                  <p class="text-black/50">Aucun ingrédient renseigné.</p>
+                )}
+              </div>
+            </section>
+
+            <section>
+              <h2 class="text-[24px] font-black text-brand-red md:text-[30px]">Préparation</h2>
+
+              <ol class="mt-7 space-y-6">
+                {preparation.length ? preparation.map((step, index) => (
+                  <li class="grid grid-cols-[34px_1fr] gap-5 text-[17px] leading-7 text-black md:text-[19px]">
+                    <span class="grid h-8 w-8 place-items-center rounded-full bg-brand-turquoise text-sm font-black text-black">{index + 1}</span>
+                    <p>{step}</p>
+                  </li>
+                )) : <p class="text-black/50">Aucune préparation renseignée.</p>}
+              </ol>
+            </section>
+          </div>
+
+          <aside class="space-y-8 lg:sticky lg:top-24">
+            {conseils.length > 0 && (
+              <section>
+                <h2 class="text-[24px] font-black text-brand-red md:text-[30px]">Conseils</h2>
+
+                <div class="mt-6 rounded-[28px] bg-seaBreeze p-6 shadow-card md:p-8">
+                  <ul class="space-y-5">
+                    {conseils.map((item) => (
+                      <li class="flex gap-4 text-[16px] leading-6 text-black md:text-[18px]">
+                        <img src="/icons/recipe/sun.svg" class="mt-1 h-6 w-6 shrink-0" alt="" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </section>
+            )}
+
+            {bienfaits.length > 0 && (
+              <details class="group overflow-hidden rounded-[20px] bg-white shadow-card">
+                <summary class="flex cursor-pointer items-center justify-between gap-4 px-6 py-5 text-[21px] font-black text-brand-red">
+                  <span>Bienfaits</span>
+                  <img src="/icons/recipe/chevron-down.svg" class="h-5 w-5 transition group-open:rotate-180" alt="" />
+                </summary>
+
+                <div class="px-6 pb-6">
+                 <ul class="divide-y divide-black/10 text-[16px] leading-6 text-black/75">
+  {bienfaits.map((item) => (
+    <li class="flex gap-3 py-4 first:pt-0 last:pb-0">
+      <span class="mt-2 h-2 w-2 shrink-0 rounded-full bg-brand-turquoise"></span>
+      <span>{item}</span>
+    </li>
+  ))}
+</ul>
+                </div>
+              </details>
+            )}
+
+            <section class="rounded-[28px] bg-seaBreeze p-6 shadow-card md:p-8">
+              <h2 class="text-[18px] font-black text-black">Vous aimez cette boisson ?</h2>
+
+              <p class="mt-3 text-[15px] leading-6 text-black/60">
+                Partagez-la avec vos amis et ajoutez-la à vos favoris.
+              </p>
+
+              <div class="mt-6 flex items-center justify-between gap-4">
+                <button id="share-recipe" class="inline-flex items-center gap-3 rounded-full bg-white px-6 py-3 text-sm font-bold text-black shadow-button transition hover:scale-105 active:scale-95" type="button">
+                  <img src="/icons/recipe/share.svg" class="h-5 w-5" alt="" />
+                  Partager
+                </button>
+
+                <button class="js-favorite grid h-14 w-14 place-items-center rounded-full bg-white shadow-button" type="button" data-boisson-id={boisson.id} data-favorite-active="false" aria-label="Ajouter aux favoris">
+                  <img src="/icons/recipe/heart-empty.svg" class="h-7 w-7" alt="" />
+                </button>
+              </div>
+            </section>
+
+            <a href="/boissons" class="mx-auto flex w-fit items-center gap-3 rounded-full bg-brand-turquoise px-8 py-3 text-sm font-black text-black shadow-button transition hover:scale-105">
+              <img src="/icons/recipe/back.svg" class="h-4 w-4" alt="" />
+              Retourner
+            </a>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script define:vars={{ title: boisson.nom_boisson }}>
+    const shareButton = document.querySelector('#share-recipe');
+
+    shareButton?.addEventListener('click', async () => {
+      const shareData = {
+        title: title,
+        text: `Découvre cette boisson : ${title}`,
+        url: window.location.href,
+      };
+
+      if (navigator.share) {
+        await navigator.share(shareData);
+        return;
+      }
+
+      await navigator.clipboard.writeText(window.location.href);
+      alert('Lien copié !');
+    });
+  </script>
+
+  <script>
+    import { addRecipeToHistory } from '../../backend/backend.js';
+
+    const favoriteButton = document.querySelector('.js-favorite[data-boisson-id]');
+    const boissonId = favoriteButton?.getAttribute('data-boisson-id');
+
+    if (boissonId) {
+      addRecipeToHistory(boissonId).catch((error) => {
+        console.warn('Historique non enregistré :', error);
+      });
+    }
+  </script>
+</Layout>
+
+<style is:global>
+  @keyframes recipe-sparkle {
+    0%, 100% { opacity: .25; transform: scale(.8) rotate(0deg); }
+    50% { opacity: 1; transform: scale(1.2) rotate(18deg); }
+  }
+
+  .recipe-sparkle {
+    position: absolute;
+    z-index: 5;
+    height: 10px;
+    width: 10px;
+    background: #ffc42f;
+    clip-path: polygon(50% 0%, 62% 35%, 100% 50%, 62% 65%, 50% 100%, 38% 65%, 0% 50%, 38% 35%);
+    animation: recipe-sparkle 2.4s ease-in-out infinite;
+  }
+</style>
