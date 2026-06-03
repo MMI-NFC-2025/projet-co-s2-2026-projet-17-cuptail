@@ -1,0 +1,454 @@
+---
+import Layout from '../layouts/Layout.astro';
+import AnimatedBlobs from '../components/AnimatedBlobs.astro';
+import DrinkCard from '../components/DrinkCard.astro';
+import { getCategories, getBoissons } from '../backend/backend.js';
+
+const categories = await getCategories();
+const boissons = await getBoissons();
+const nouveautes = boissons.filter((boisson) => boisson.is_new).slice(0, 12);
+---
+
+<Layout title="Cielixir - Recettes de boissons selon la météo" description="Découvre des recettes adaptées à la météo, tes envies et ton humeur. Simple, adapté à chaque moment.">
+  <!-- Hero Section -->
+  <section class="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-spring px-6 pb-16 pt-16">
+    <AnimatedBlobs opacity="opacity-80" />
+
+    <div class="pointer-events-none absolute inset-0 z-[1] bg-white/10"></div>
+
+    <div class="relative z-10 grid w-full max-w-6xl items-center gap-12 md:grid-cols-2 md:gap-8">
+      <!-- Left: Text -->
+      <div class="flex flex-col">
+        <span class="inline-block w-fit rounded-full bg-[#cbfaf8] px-6 py-3 text-[16px] font-bold text-black md:text-[18px]">Recettes de boissons selon la météo</span>
+
+       <h1 class="mt-4 text-[36px] font-bold leading-[120%] text-black md:text-[52px]">
+  Trouve la boisson parfaite selon le
+
+  <span class="relative inline-block">
+    <span class="text-[40px] text-brand-turquoise md:text-[60px]">
+      temps
+    </span>
+
+    <img
+      src="/line_temps.png"
+      alt=""
+      class="absolute left-1/2 top-full mt-1 w-[120px] -translate-x-1/2"
+    />
+  </span>
+
+  et ton
+
+  <span class="text-[40px] text-red-500 md:text-[60px]">
+    envie
+  </span>
+</h1>
+
+        <p class="mt-6 max-w-[480px] text-[18px] font-medium leading-relaxed text-black/70 md:text-[20px]">
+          Cielixir te propose des recettes simples, adaptées à la météo et à ton humeur. <span class="font-bold text-black">Frais, chaud, fruité</span>... tout ce qu'il faut !
+        </p>
+
+        <div class="mt-10 flex flex-col gap-4 sm:flex-row">
+          <a href="/boissons" class="rounded-full bg-brand-turquoise px-10 py-4 text-center text-[16px] font-bold text-black shadow-button transition hover:scale-105 active:scale-95 md:text-[18px]">
+            Trouver ma boisson
+          </a>
+          <a href="#features" class="rounded-full border-2 border-brand-turquoise bg-white px-10 py-4 text-center text-[16px] font-bold text-black transition hover:bg-black/5 active:scale-95 md:text-[18px]">
+            Découvrir les recettes
+          </a>
+        </div>
+      </div>
+
+      <!-- Right: Phone Mockup -->
+      <div class="relative flex justify-center">
+        <img src="/mockup.png" alt="CupTail App" class="w-full max-w-[900px] drop-shadow-2xl" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="w-full bg-white px-6 py-16 md:py-24">
+    <div class="mx-auto max-w-5xl">
+      <div class="mb-16 text-center md:mb-20">
+        <span class="inline-block rounded-full bg-[#cbfaf8] px-4 py-2 text-[14px] font-bold text-black md:text-[16px]">Pourquoi Cielixir ?</span>
+        <h2 class="mt-3 text-[32px] font-bold text-black md:text-[42px]">
+          Une expérience pensée pour chaque moment
+        </h2>
+      </div>
+
+      <!-- Features Grid -->
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <!-- Feature 1 -->
+        <div class="flex flex-col items-center rounded-3xl bg-[#cbfaf8] p-8 text-center shadow-card transition hover:shadow-panel">
+          <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-white">
+            <img src="/icons/weather/sun.svg" class="h-8 w-8" alt="Météo" />
+          </div>
+          <h3 class="mt-4 text-[18px] font-bold text-black">Météo en temps réel</h3>
+          <p class="mt-2 text-sm font-medium text-gray-600">On te propose des boissons adaptées à la chaleur, ou le froid</p>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="flex flex-col items-center rounded-3xl bg-[#cbfaf8] p-8 text-center shadow-card transition hover:shadow-panel">
+          <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-white">
+            <img src="/icons/Vector3.png" class="h-8 w-8" alt="Recettes" />
+          </div>
+          <h3 class="mt-4 text-[18px] font-bold text-black">Recettes variées</h3>
+          <p class="mt-2 text-sm font-medium text-gray-600">Café, thé, smoothies, cocktails, protéinés, fermentés, vegan... </p>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="flex flex-col items-center rounded-3xl bg-[#cbfaf8] p-8 text-center shadow-card transition hover:shadow-panel">
+          <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-white">
+            <img src="/icons/heart-full.svg" class="h-8 w-8" alt="Favoris" />
+          </div>
+          <h3 class="mt-4 text-[18px] font-bold text-black">Rapide & facile</h3>
+          <p class="mt-2 text-sm font-medium text-gray-600">Des recettes claires, prêtes en quelques minutes, avec des ingrédients faciles à trouver</p>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="flex flex-col items-center rounded-3xl bg-[#cbfaf8] p-8 text-center shadow-card transition hover:shadow-panel">
+          <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-white">
+            <img src="/icons/sauvegarde.png" class="h-8 w-8" alt="Sauvegarde" />
+          </div>
+          <h3 class="mt-4 text-[18px] font-bold text-black">Tout est sauvegardé</h3>
+          <p class="mt-2 text-sm font-medium text-gray-600">Ajoute tes préférées, retrouve ton historique et organise tes inspirations</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="w-full bg-pale-gray px-6 py-16 md:py-24">
+    <div class="mx-auto max-w-5xl">
+      <div class="mb-12 text-center">
+        <span class="inline-block rounded-full bg-[#cbfaf8] px-4 py-2 text-[14px] font-bold text-black md:text-[16px]">Comment ça marche ?</span>
+        <h2 class="mt-6 text-[32px] font-bold text-black md:text-[42px]">
+          3 façons de trouver ta prochaine boisson
+        </h2>
+      </div>
+
+      <!-- Steps Grid -->
+      <div class="relative grid gap-12 md:grid-cols-3">
+        <!-- Arrow 1 (between card 1 and 2) -->
+        <div class="absolute left-1/3 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 transform md:block">
+          <img src="/icons/flèche1.svg" alt="" class="h-16 w-16" />
+        </div>
+
+        <!-- Arrow 2 (between card 2 and 3) -->
+        <div class="absolute left-2/3 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 transform md:block">
+          <img src="/icons/flèche2.svg" alt="" class="h-16 w-16" />
+        </div>
+
+        <!-- Step 1 -->
+        <div class="flex flex-col items-center">
+          <div class="w-full rounded-3xl bg-[#e0fdf9] p-8 shadow-card">
+            <div class="mb-6 flex items-center gap-4">
+              <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand-turquoise text-[20px] font-black text-white shadow-button">
+                1
+              </div>
+              <h3 class="text-[20px] font-bold text-black">Par la météo</h3>
+            </div>
+
+            <div class="flex h-64 w-full items-center justify-center px-0">
+              <img src="/images/Promo-mockup.png" alt="Météo mockup" class="w-full scale-150 object-contain" />
+            </div>
+          </div>
+
+          <p class="mt-6 text-center text-sm text-gray-700">
+            On détecte le temps et on filtre les boissons idéales.
+          </p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="flex flex-col items-center">
+          <div class="w-full rounded-3xl bg-[#ffe5e5] p-8 shadow-card">
+            <div class="mb-6 flex items-center gap-4">
+              <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-red-400 text-[20px] font-black text-white shadow-button">
+                2
+              </div>
+              <h3 class="text-[20px] font-bold text-black">Avec le quiz express</h3>
+            </div>
+
+            <div class="flex h-64 flex-col items-center justify-center gap-3 overflow-y-auto">
+              <!-- Temperature Options -->
+              <div class="grid w-full grid-cols-2 gap-2 px-2">
+                <a href="/boissons?temperature=froid" class="group rounded-[12px] bg-lavender p-2 text-center shadow-card transition hover:shadow-panel">
+                  <img src="/icons/weather/ice.svg" class="mx-auto h-12 w-12 object-contain" />
+                  <p class="mt-1 text-[11px] font-bold text-black">Froid</p>
+                </a>
+                <a href="/boissons?temperature=chaud" class="group rounded-[12px] bg-cottonCandy p-2 text-center shadow-card transition hover:shadow-panel">
+                  <img src="/icons/weather/hot.svg" class="mx-auto h-12 w-12 object-contain" />
+                  <p class="mt-1 text-[11px] font-bold text-black">Chaud</p>
+                </a>
+              </div>
+              
+              <!-- Flavor Options -->
+              <div class="grid w-full grid-cols-3 gap-2 px-2">
+                <div class="rounded-[12px] bg-lavender p-2 text-center shadow-card">
+                  <img src="/icons/quiz/fruit.png" class="mx-auto h-12 w-12 object-contain" />
+                  <p class="mt-1 text-[11px] font-bold text-black">Fruité</p>
+                </div>
+                <div class="rounded-[12px] bg-[#c3ffad] p-2 text-center shadow-card">
+                  <img src="/icons/quiz/vegetable.png" class="mx-auto h-12 w-12 object-contain" />
+                  <p class="mt-1 text-[11px] font-bold text-black">Légume</p>
+                </div>
+                <div class="rounded-[12px] bg-lavender p-2 text-center shadow-card">
+                  <img src="/icons/quiz/berries.png" class="mx-auto h-12 w-12 object-contain" />
+                  <p class="mt-1 text-[11px] font-bold text-black">Baies</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p class="mt-6 text-center text-sm text-gray-700">
+            Réponds à 3 questions pour une suggestion personnalisée.
+          </p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="flex flex-col items-center">
+          <div class="w-full rounded-3xl bg-[#f0e5ff] p-8 shadow-card">
+            <div class="mb-6 flex items-center gap-4">
+              <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-purple-500 text-[20px] font-black text-white shadow-button">
+                3
+              </div>
+              <h3 class="text-[20px] font-bold text-black">Par catégorie</h3>
+            </div>
+
+            <div class="flex h-64 items-center justify-center">
+              <div class="grid grid-cols-3 gap-2">
+              {categories.slice(0, 9).map((category) => {
+                const imageUrl = category.image_categorie
+                  ? `https://api.ruslanabudniak.fr/api/files/${category.collectionId}/${category.id}/${category.image_categorie}`
+                  : '/images/placeholder-drink.png';
+
+                return (
+                  <a
+                    href={`/boissons?categorie=${category.id}`}
+                    class="group overflow-hidden rounded-[12px] bg-white shadow-card transition hover:shadow-panel"
+                  >
+                    <div class="h-[50px] bg-card">
+                      <img
+                        src={imageUrl}
+                        alt={category.nom_categorie}
+                        class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                    </div>
+
+                    <div class="px-2 py-1 text-center">
+                      <h3 class="line-clamp-1 text-[10px] font-bold text-black">
+                        {category.nom_categorie}
+                      </h3>
+                    </div>
+                  </a>
+                );
+              })}
+              </div>
+            </div>
+          </div>
+
+          <p class="mt-6 text-center text-sm text-gray-700">
+            Explore toutes nos catégories et découverte de nouvelles idées.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Today's Drinks Section -->
+  <section class="w-full bg-spring px-6 py-16 md:py-24">
+    <div class="mx-auto max-w-5xl">
+      <div class="mb-12">
+        <span class="inline-block w-fit rounded-full bg-[#cbfaf8] px-6 py-3 text-[16px] font-bold text-black md:text-[18px]">Des idées adaptées à ta météo</span>
+<div class="mt-8 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+  <!-- Titre -->
+  <h2 class="text-[32px] font-bold leading-tight text-[#1F2940] md:text-[42px]">
+    Que fait-il aujourd'hui ?
+  </h2>
+
+  <!-- Sélecteur météo -->
+  <div class="flex items-center rounded-full bg-white p-2 shadow-[0_10px_30px_rgba(0,0,0,0.08)]">
+    
+    <!-- Actif -->
+    <button class="flex items-center gap-3 rounded-full bg-white px-8 py-4 text-lg font-semibold text-[#1F2940] shadow-[0_4px_12px_rgba(0,0,0,0.08)]">
+      <img
+        src="/icons/weather/sun.svg"
+        alt="Chaud"
+        class="h-5 w-5"
+      />
+      <span>Chaud</span>
+    </button>
+
+    <button class="flex items-center gap-3 px-8 py-4 text-lg font-medium text-[#1F2940]">
+      <img
+        src="/icons/weather/rain.svg"
+        alt="Pluie"
+        class="h-5 w-5"
+      />
+      <span>Pluie</span>
+    </button>
+
+    <button class="flex items-center gap-3 px-8 py-4 text-lg font-medium text-[#1F2940]">
+      <img
+        src="/icons/weather/cold.svg"
+        alt="Froid"
+        class="h-5 w-5"
+      />
+      <span>Froid</span>
+    </button>
+
+  </div>
+</div>
+        
+      </div>
+
+      <!-- Drinks Carousel -->
+      <div class="relative">
+        <!-- Left Arrow -->
+        <button id="drinks-prev" class="absolute left-0 top-1/2 z-30 hidden h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-white shadow-button md:grid" type="button">
+          <img src="/icons/arrow-left.svg" class="h-4 w-4" alt="" />
+        </button>
+
+        <!-- Carousel -->
+        <div id="drinks-carousel" class="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-4 md:gap-6 xl:gap-8 scrollbar-hide">
+          {(nouveautes.length ? nouveautes : boissons.slice(0, 12)).slice(0, 12).map((boisson) => (
+            <div class="snap-start">
+              <DrinkCard boisson={boisson} />
+            </div>
+          ))}
+        </div>
+
+        <!-- Right Arrow -->
+        <button id="drinks-next" class="absolute right-0 top-1/2 z-30 hidden h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-white shadow-button md:grid" type="button">
+          <img src="/icons/arrow-right.svg" class="h-4 w-4" alt="" />
+        </button>
+      </div>
+
+      <!-- CTA Button -->
+      <div class="mt-12 text-center">
+        <a href="/boissons" class="inline-block rounded-full bg-brand-turquoise px-8 py-3 text-[15px] font-bold text-black shadow-button transition hover:scale-105 active:scale-95">
+          Voir plus de recettes
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Favorites Section -->
+  <section class="w-full bg-pale-gray px-6 py-16 md:py-24">
+    <div class="mx-auto max-w-5xl">
+      <div class="grid items-center gap-12 md:grid-cols-2 md:gap-8">
+        <!-- Left: Text -->
+        <div class="flex flex-col">
+        <span class="inline-block w-fit rounded-full bg-[#cbfaf8] px-6 py-3 text-[16px] font-bold text-black md:text-[18px]">Pratique au quotidien</span>
+
+          <h2 class="mt-3 text-[32px] font-bold text-black md:text-[42px]">
+            Tes recettes préférées, toujours avec toi
+          </h2>
+
+          <p class="mt-6 max-w-[420px] text-[16px] font-medium leading-relaxed text-black/70 md:text-[18px]">
+            Sauvegarde tes boissons préférées dans tes favoris pour les retrouver en un clic. Mets tes recettes en favoris pour ne jamais perdre une bonne idée !
+          </p>
+
+          <!-- Features List -->
+<div class="mt-8 space-y-6">
+  <div class="flex items-start gap-4">
+    <img
+      src="/sauvegard.png"
+      alt="Sauvegarde"
+      class="h-10 w-10 shrink-0"
+    />
+    <div>
+      <h3 class="font-bold text-black">Accès rapide</h3>
+      <p class="text-sm text-gray-600">
+        Retrouve tes boissons favorites en un clic.
+      </p>
+    </div>
+  </div>
+
+  <div class="flex items-start gap-4">
+    <img
+      src="/historique.png"
+      alt="Historique"
+      class="h-10 w-10 shrink-0"
+    />
+    <div>
+      <h3 class="font-bold text-black">Historique</h3>
+      <p class="text-sm text-gray-600">
+        Consulte facilement les recettes déjà explorées.
+      </p>
+    </div>
+  </div>
+
+  <div class="flex items-start gap-4">
+    <img
+      src="/accessible.png"
+      alt="Personnalisation"
+      class="h-10 w-10 shrink-0"
+    />
+    <div>
+      <h3 class="font-bold text-black">Personnalisé</h3>
+      <p class="text-sm text-gray-600">
+        Une expérience adaptée à tes préférences et à tes besoins.
+      </p>
+    </div>
+  </div>
+</div>
+</div>
+        <!-- Right: Phone Mockup -->
+        <div class="flex justify-center">
+          <img src="/mockup_favori.png" alt="CupTail App - Favoris" class="w-full max-w-[400px] drop-shadow-2xl" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Promo Section -->
+  <section class="w-full bg-cottonCandy px-4 py-10 md:py-24">
+    <div class="mx-auto max-w-5xl">
+      <div class="grid items-center gap-12 md:grid-cols-2 md:gap-8">
+        <!-- Left: Image -->
+        <div class="flex justify-center">
+          <div class="relative h-300 w-300 rounded-xl bg-cottonCandy ">
+                               <img src="/Promo-boisson.png" alt="CupTail App - Favoris" class="w-full max-w-[400px] drop-shadow-2xl" />
+ <div class="absolute inset-0 flex items-center justify-center">
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Text -->
+        <div class="flex flex-col">
+                  <span class="inline-block w-fit rounded-full bg-[#cbfaf8] px-6 py-3 text-[16px] font-bold text-black md:text-[18px]">Prêt à trouver ta boisson idéale ?</span>
+
+
+          <p class="mt-6 max-w-[420px] font-bold text-3xl  leading-relaxed text-black">
+            Des centaines de recettes t'attendent selon la météo, ton envie et ton humeur.
+          </p>
+
+          <div class="mt-8 flex flex-col gap-4 sm:flex-row">
+            <a href="/boissons" class="rounded-full bg-brand-turquoise px-8 py-3 text-center text-[15px] font-bold text-white shadow-button transition hover:scale-105 active:scale-95">
+              Tester Cielixir gratuitement
+            </a>
+            <a href="#features" class="rounded-full border-2  bg-white px-8 py-3 text-center text-[15px] font-bold text-black transition hover:bg-black/5 active:scale-95">
+              Découvrir les recettes
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const carousel = document.querySelector('#drinks-carousel');
+  const prev = document.querySelector('#drinks-prev');
+  const next = document.querySelector('#drinks-next');
+
+  const scrollAmount = 210;
+
+  prev?.addEventListener('click', () => {
+    carousel?.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+  });
+
+  next?.addEventListener('click', () => {
+    carousel?.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+  });
+</script>
