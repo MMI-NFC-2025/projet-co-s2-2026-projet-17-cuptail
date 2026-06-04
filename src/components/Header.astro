@@ -10,7 +10,7 @@ const navLinks = [
 ];
 ---
 
-<header class="relative z-50 w-full bg-white">
+<header class="relative z-50 w-full bg-spring">
   <div class="flex h-[60px] w-full items-center justify-between px-4 md:h-[70px] md:px-10 lg:px-16">
     <a href="/" class="flex items-center gap-3 transition hover:opacity-80">
       <img src="/logo.svg" class="h-8 w-8 md:h-10 md:w-10" alt="Logo" />
@@ -24,7 +24,7 @@ const navLinks = [
       {navLinks.map((link) => (
         <a
           href={link.href}
-          class="text-[15px] font-medium text-black transition hover:opacity-70"
+          class="text-[15px] font-medium text-[#410B2B] transition hover:opacity-70"
         >
           {link.name}
         </a>
@@ -33,10 +33,22 @@ const navLinks = [
 
     <div class="flex items-center gap-4">
       <a
-        href="/"
-        class="hidden rounded-full bg-brand-turquoise px-6 py-2 text-[15px] font-bold text-white shadow-button transition hover:scale-105 active:scale-95 lg:inline-block"
+        id="desktop-account-link"
+        href="/login"
+        class="hidden h-10 w-10 overflow-hidden rounded-full bg-white shadow-soft lg:grid lg:place-items-center"
+        aria-label="Compte"
       >
-        Tester l'app
+        <img
+          id="desktop-account-image"
+          src="/icons/account/default-user.svg"
+          class="h-full w-full object-cover"
+          alt=""
+        />
+
+        <span
+          id="desktop-account-initial"
+          class="hidden text-lg font-black text-brand-turquoise"
+        ></span>
       </a>
 
       <button

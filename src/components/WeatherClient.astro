@@ -2,9 +2,16 @@
   <div class="mx-auto w-full max-w-6xl overflow-hidden rounded-[32px] bg-hero p-5 shadow-panel md:p-8 lg:p-10">
     <div class="relative min-h-[610px] md:min-h-[520px] lg:min-h-[560px]">
       <div class="relative z-30 md:max-w-[44%]">
-        <button id="city-button" class="mb-3 flex items-center gap-2 text-[13px] font-bold text-black md:text-[15px]">
+        <button
+          id="city-button"
+          class="group mb-3 inline-flex items-center gap-2 text-[13px] font-bold text-black transition hover:text-brand-turquoise md:text-[15px]"
+          type="button"
+          aria-label="Changer de ville"
+          title="Changer de ville"
+        >
           <span>📍</span>
-          <span id="weather-city">Montbéliard</span>
+          <span id="weather-city" class="border-b border-transparent transition group-hover:border-brand-turquoise">Montbéliard</span>
+          <span class="text-[11px] font-bold text-black/35 opacity-0 transition group-hover:opacity-100">Changer</span>
         </button>
 
         <div class="flex items-start justify-between gap-4 md:block">
@@ -22,7 +29,7 @@
 
       <div class="absolute bottom-0 left-0 right-0 z-40 md:left-[38%] md:top-0 md:flex md:items-end">
         <div class="relative w-full">
-          <button id="weather-prev" class="absolute left-1 top-1/2 z-40 hidden h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-white shadow-button md:grid">
+          <button id="weather-prev" class="absolute left-1 top-1/2 z-40 hidden h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-white shadow-button md:grid" type="button">
             <img src="/icons/weather/arrow-left.svg" alt="" class="h-4 w-4" />
           </button>
 
@@ -32,7 +39,7 @@
             </div>
           </div>
 
-          <button id="weather-next" class="absolute right-1 top-1/2 z-40 hidden h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-white shadow-button md:grid">
+          <button id="weather-next" class="absolute right-1 top-1/2 z-40 hidden h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-white shadow-button md:grid" type="button">
             <img src="/icons/weather/arrow-right.svg" alt="" class="h-4 w-4" />
           </button>
 
@@ -47,7 +54,7 @@
   </div>
 
   <div id="location-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 px-5">
-    <div class="w-full max-w-[340px] rounded-[28px] bg-white p-6 shadow-xl">
+    <div id="location-panel" class="w-full max-w-[340px] rounded-[28px] bg-white p-6 shadow-xl">
       <h2 class="text-xl font-black text-black">Utiliser ta position ?</h2>
 
       <p class="mt-3 text-sm leading-6 text-neutral-500">
@@ -55,11 +62,11 @@
       </p>
 
       <div class="mt-5 flex flex-col gap-3">
-        <button id="allow-location" class="rounded-full bg-brand-turquoise px-5 py-3 text-sm font-black text-black shadow-button">
+        <button id="allow-location" class="rounded-full bg-brand-turquoise px-5 py-3 text-sm font-black text-black shadow-button" type="button">
           Utiliser ma position
         </button>
 
-        <button id="deny-location" class="rounded-full bg-neutral-100 px-5 py-3 text-sm font-bold text-black">
+        <button id="deny-location" class="rounded-full bg-neutral-100 px-5 py-3 text-sm font-bold text-black" type="button">
           Continuer avec Montbéliard
         </button>
       </div>
@@ -68,8 +75,8 @@
         <label for="city-input" class="text-xs font-bold text-neutral-500">Ou choisis une ville</label>
 
         <div class="mt-2 flex gap-2">
-          <input id="city-input" class="min-w-0 flex-1 rounded-full border border-neutral-200 px-4 py-2 text-sm outline-none" type="text" placeholder="Paris, Lyon..." />
-          <button id="search-city" class="rounded-full bg-black px-4 py-2 text-sm font-bold text-white">OK</button>
+          <input id="city-input" class="min-w-0 flex-1 rounded-full border border-neutral-200 px-4 py-2 text-sm outline-none focus:border-brand-turquoise" type="text" placeholder="Paris, Lyon..." />
+          <button id="search-city" class="rounded-full bg-black px-4 py-2 text-sm font-bold text-white" type="button">OK</button>
         </div>
       </div>
     </div>
@@ -94,13 +101,9 @@
   import { renderWeatherCards } from '../scripts/WeatherCard.js';
   import { createCarousel } from '../scripts/carousel.js';
 
-    function getElement(selector: string): Element {
+  function getElement(selector: string): Element {
     const element = document.querySelector(selector);
-
-    if (!element) {
-      throw new Error(`WeatherClient: élément introuvable ${selector}`);
-    }
-
+    if (!element) throw new Error(`WeatherClient: élément introuvable ${selector}`);
     return element;
   }
 
@@ -133,11 +136,16 @@
   function openModal() {
     modal.classList.remove('hidden');
     modal.classList.add('flex');
+    setTimeout(() => cityInput.focus(), 120);
   }
 
   function closeModal() {
     modal.classList.add('hidden');
     modal.classList.remove('flex');
+  }
+
+  function isModalOpen() {
+    return modal.classList.contains('flex');
   }
 
   async function updateWeatherSection(location: { city: string; latitude: number; longitude: number }) {
@@ -165,9 +173,9 @@
 
   function askBrowserLocation() {
     if (!navigator.geolocation) {
-      updateWeatherSection(DEFAULT_LOCATION);
       saveLocation(DEFAULT_LOCATION);
       closeModal();
+      updateWeatherSection(DEFAULT_LOCATION);
       return;
     }
 
@@ -196,6 +204,21 @@
     );
   }
 
+  async function searchCity() {
+    const cityName = cityInput.value.trim();
+    if (!cityName) return;
+
+    try {
+      const location = await getCityCoords(cityName);
+      saveLocation(location);
+      closeModal();
+      await updateWeatherSection(location);
+    } catch {
+      alert('Ville introuvable. Essaie une autre ville.');
+    }
+  }
+
+  cityButton.addEventListener('click', openModal);
   allowButton.addEventListener('click', askBrowserLocation);
 
   denyButton.addEventListener('click', async () => {
@@ -204,29 +227,42 @@
     await updateWeatherSection(DEFAULT_LOCATION);
   });
 
-  searchCityButton.addEventListener('click', async () => {
-    const cityName = cityInput.value.trim();
+  searchCityButton.addEventListener('click', searchCity);
 
-    if (!cityName) return;
-
-    try {
-      const location = await getCityCoords(cityName);
-      saveLocation(location);
-      closeModal();
-      await updateWeatherSection(location);
-    } catch (error) {
-      alert('Ville introuvable. Essaie une autre ville.');
+  cityInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      searchCity();
     }
   });
 
-  cityButton.addEventListener('click', openModal);
+  modal.addEventListener('click', (event) => {
+    if (event.target === modal && isModalOpen()) closeModal();
+  });
 
-  const savedLocation = getSavedLocation();
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && isModalOpen()) closeModal();
+  });
 
-  if (savedLocation) {
-    updateWeatherSection(savedLocation);
-  } else {
-    openModal();
-    updateWeatherSection(DEFAULT_LOCATION);
-  }
+const savedLocation = getSavedLocation();
+
+if (savedLocation) {
+  updateWeatherSection(savedLocation);
+} else {
+  updateWeatherSection(DEFAULT_LOCATION);
+
+  const weatherObserver = new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting) {
+        openModal();
+        weatherObserver.disconnect();
+      }
+    },
+    {
+      threshold: 0.4,
+    }
+  );
+
+  weatherObserver.observe(section);
+}
 </script>

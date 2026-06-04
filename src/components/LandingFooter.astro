@@ -1,0 +1,101 @@
+---
+const legalLinks = [
+  { name: "Conditions générales d’utilisation", href: "/legal/cgu" },
+  { name: "Cookies", href: "/legal/cookies" },
+  { name: "Conditions d’utilisations et Mentions Légales", href: "/legal/mentions-legales" },
+  { name: "Politique de Confidentialité", href: "/legal/privacy" },
+];
+
+const socialLinks = [
+  { name: "Pinterest", icon: "/pinterest.svg", href: "#" },
+  { name: "TikTok", icon: "/tiktok.svg", href: "#" },
+  { name: "Instagram", icon: "/instagram.svg", href: "#" },
+  { name: "Facebook", icon: "/facebook.svg", href: "#" },
+  { name: "Email", icon: "/mail.svg", href: "/contact" },
+];
+---
+
+<footer class="w-full bg-[var(--color-footer-landing)] px-6 py-10 md:px-12 lg:px-20">
+  <div class="mx-auto max-w-6xl">
+    <div class="grid gap-10 md:grid-cols-[1.2fr_1fr_1.3fr] md:items-start">
+      
+      <!-- Brand -->
+      <div>
+        <a href="/landing" class="flex items-center gap-4">
+          <img
+            src="/logo.svg"
+            class="h-14 w-14 object-contain"
+            alt="Cielixir"
+          />
+
+          <span class="text-[30px] font-bold leading-none text-black">
+            Cielixir
+          </span>
+        </a>
+
+        <p class="mt-6 max-w-[280px] text-[15px] font-medium leading-6 text-slate-700">
+          Des recettes de boissons adaptées à la météo, à ton envie et à ton quotidien.
+        </p>
+
+        <div class="mt-7 flex items-center gap-6">
+          {socialLinks.map((link) => (
+            <a
+              href={link.href}
+              aria-label={link.name}
+              class="transition hover:scale-110"
+            >
+              <img src={link.icon} class="h-6 w-6 object-contain" alt="" />
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <!-- Legal -->
+      <nav class="flex flex-col gap-4 md:pt-3">
+        {legalLinks.map((link) => (
+          <a
+            href={link.href}
+            class="text-[13px] font-medium leading-5 text-slate-700 transition hover:text-black"
+          >
+            {link.name}
+          </a>
+        ))}
+      </nav>
+
+      <!-- Newsletter -->
+      <div class="rounded-[18px] bg-white/70 p-6 shadow-soft md:justify-self-end lg:w-[330px]">
+        <h2 class="text-[16px] font-bold text-slate-800">
+          Reste informé(e) !
+        </h2>
+
+        <p class="mt-4 text-[14px] font-medium leading-6 text-slate-700">
+          Reçois des idées de recettes et des conseils directement dans ta boîte mail.
+        </p>
+
+        <form class="mt-5 flex items-center gap-3">
+          <input
+            type="email"
+            placeholder="Ton email"
+            class="min-w-0 flex-1 rounded-full border border-brand-turquoise bg-white px-5 py-3 text-[14px] outline-none placeholder:text-slate-400"
+          />
+
+          <button
+            type="submit"
+            class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-brand-turquoise shadow-button transition hover:scale-105 active:scale-95"
+            aria-label="Envoyer"
+          >
+            <img src="/icons/arrow-submit.svg" class="h-4 w-4" alt="" />
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="mt-10 h-px w-full bg-black/10"></div>
+
+    <div class="mt-6 flex flex-col gap-4 text-[14px] font-medium text-slate-700 md:flex-row md:items-center md:justify-between">
+      <p>© 2026 Cielixir - Tous droits réservés</p>
+
+      <p>Fait avec ❤️ à Montbéliard</p>
+    </div>
+  </div>
+</footer>

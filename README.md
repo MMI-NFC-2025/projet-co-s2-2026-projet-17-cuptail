@@ -4,8 +4,8 @@
 Éléménts à renseigner pour la soutenance :
 
 - [ ] Nom du projet : Cielixir
-- [ ] URL de la landing page :
-- [ ] URL de l'application finale :
+- [ ] URL de la landing page : https://cielixir.ruslanabudniak.fr/landing/
+- [ ] URL de l'application finale : http://cielixir.ruslanabudniak.fr
 - [ ] URL de connexion au back office : https://api.ruslanabudniak.fr/_/ 
 - [ ] Identifiant de connexion au backoffice : mamansambe47@gmail.com
 - [ ] Mot de passe de connexion au backoffice : Pocketbase@Cuptail
