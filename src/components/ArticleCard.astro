@@ -25,6 +25,7 @@ function formatDate(date: string) {
 <article
   class={cardClass}
   data-category={String(article.categorie || article.badge_1 || '').toLowerCase()}
+  data-search={`${article.titre || ''} ${article.titre_court || ''} ${article.description_courte || ''} ${article.intro || ''} ${article.categorie || ''} ${article.badge_1 || ''} ${article.badge_2 || ''}`.toLowerCase()}
 >
   <div class="relative h-[188px] md:h-[220px]">
     <img

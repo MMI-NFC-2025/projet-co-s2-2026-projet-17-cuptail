@@ -5,14 +5,7 @@ import ArticleCard from '../components/ArticleCard.astro';
 
 const articles = await getArticles();
 
-const categories = [
-  'Tous',
-  'Nutrition',
-  'Ingrédients',
-  'Astuces',
-  'Hydratation',
-  'Énergie'
-];
+const categories = ['Tous', 'Nutrition', 'Ingrédients', 'Astuces', 'Hydratation', 'Énergie'];
 ---
 
 <Layout title="Conseils & articles">
@@ -21,32 +14,28 @@ const categories = [
       <div class="mb-8 flex items-start justify-between gap-4">
         <div>
           <h1 class="page-title">Conseils & articles</h1>
-
-          <p class="page-subtitle mt-3 max-w-[320px]">
-            Des idées, astuces et infos pour mieux profiter de vos boissons.
-          </p>
+          <p class="page-subtitle mt-3 max-w-[320px]">Des idées, astuces et infos pour mieux profiter de vos boissons.</p>
         </div>
 
-        <button
-          class="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-white shadow-button"
-          type="button"
-          aria-label="Rechercher"
-        >
+        <button id="toggle-search" class="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-white shadow-button transition hover:scale-105 active:scale-95" type="button" aria-label="Rechercher">
           <img src="/icons/search.svg" class="h-5 w-5" alt="" />
         </button>
       </div>
 
+      <div id="search-panel" class="mb-8 hidden rounded-[26px] bg-white p-4 shadow-card">
+        <label for="article-search" class="mb-2 block text-sm font-bold text-black">Rechercher un article</label>
+
+        <div class="flex items-center gap-3 rounded-full bg-neutral-100 px-4 py-3">
+          <img src="/icons/search.svg" class="h-4 w-4 opacity-60" alt="" />
+          <input id="article-search" class="min-w-0 flex-1 bg-transparent text-sm font-bold text-black outline-none placeholder:text-black/35" type="search" placeholder="Hydratation, sucre, fruits rouges..." />
+        </div>
+
+        <p id="search-count" class="mt-3 text-xs font-bold text-black/45"></p>
+      </div>
+
       <div class="mb-8 flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
         {categories.map((category, index) => (
-          <button
-            class={`article-filter shrink-0 rounded-full px-5 py-2 text-sm font-bold shadow-button ${
-              index === 0
-                ? 'bg-brand-turquoise text-white'
-                : 'bg-white text-black'
-            }`}
-            type="button"
-            data-category={category.toLowerCase()}
-          >
+          <button class={`article-filter shrink-0 rounded-full px-5 py-2 text-sm font-bold shadow-button ${index === 0 ? 'bg-brand-turquoise text-white' : 'bg-white text-black'}`} type="button" data-category={category.toLowerCase()}>
             {category}
           </button>
         ))}
@@ -57,18 +46,49 @@ const categories = [
           <ArticleCard article={article} variant="grid" />
         ))}
       </div>
+
+      <div id="no-results" class="hidden rounded-[28px] bg-white p-8 text-center shadow-card">
+        <p class="text-lg font-bold text-black">Aucun article trouvé</p>
+        <p class="mt-2 text-sm text-black/50">Essaie un autre mot-clé ou une autre catégorie.</p>
+      </div>
     </div>
   </section>
 </Layout>
 
 <script>
-  const filterButtons = document.querySelectorAll('.article-filter');
-  const articleCards = document.querySelectorAll('.article-card');
+  const filterButtons = document.querySelectorAll<HTMLElement>('.article-filter');
+  const articleCards = document.querySelectorAll<HTMLElement>('.article-card');
+  const toggleSearch = document.querySelector<HTMLElement>('#toggle-search');
+  const searchPanel = document.querySelector<HTMLElement>('#search-panel');
+  const searchInput = document.querySelector<HTMLInputElement>('#article-search');
+  const searchCount = document.querySelector<HTMLElement>('#search-count');
+  const noResults = document.querySelector<HTMLElement>('#no-results');
+
+  function getActiveCategory() {
+    return document.querySelector<HTMLElement>('.article-filter.bg-brand-turquoise')?.dataset.category?.toLowerCase() || 'tous';
+  }
+
+  function filterArticles() {
+    const activeCategory = getActiveCategory();
+    const query = searchInput?.value.trim().toLowerCase() || '';
+    let visibleCount = 0;
+
+    articleCards.forEach((card) => {
+      const cardCategory = card.dataset.category?.toLowerCase() || '';
+      const searchText = card.dataset.search?.toLowerCase() || '';
+      const matchesCategory = activeCategory === 'tous' || cardCategory.includes(activeCategory);
+      const matchesSearch = !query || searchText.includes(query);
+
+      card.classList.toggle('hidden', !(matchesCategory && matchesSearch));
+      if (matchesCategory && matchesSearch) visibleCount++;
+    });
+
+    if (searchCount) searchCount.textContent = query ? `${visibleCount} résultat${visibleCount > 1 ? 's' : ''} trouvé${visibleCount > 1 ? 's' : ''}` : '';
+    noResults?.classList.toggle('hidden', visibleCount !== 0);
+  }
 
   filterButtons.forEach((button) => {
     button.addEventListener('click', () => {
-      const selectedCategory = button.dataset.category?.toLowerCase();
-
       filterButtons.forEach((item) => {
         item.classList.remove('bg-brand-turquoise', 'text-white');
         item.classList.add('bg-white', 'text-black');
@@ -77,18 +97,14 @@ const categories = [
       button.classList.remove('bg-white', 'text-black');
       button.classList.add('bg-brand-turquoise', 'text-white');
 
-      articleCards.forEach((card) => {
-        const cardCategory = card.dataset.category?.toLowerCase() || '';
-
-        if (
-          selectedCategory === 'tous' ||
-          cardCategory.includes(selectedCategory)
-        ) {
-          card.classList.remove('hidden');
-        } else {
-          card.classList.add('hidden');
-        }
-      });
+      filterArticles();
     });
   });
+
+  toggleSearch?.addEventListener('click', () => {
+    searchPanel?.classList.toggle('hidden');
+    if (!searchPanel?.classList.contains('hidden')) searchInput?.focus();
+  });
+
+  searchInput?.addEventListener('input', filterArticles);
 </script>

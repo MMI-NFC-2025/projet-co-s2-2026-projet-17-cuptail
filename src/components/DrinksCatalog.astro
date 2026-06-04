@@ -365,12 +365,18 @@ function getBoissonCategories(boisson) {
   <img class="h-[9px] w-[10px] md:h-[10px] md:w-[11px]" src="/icons/heart-empty.svg" alt="" />
 </button>
 
-          <img
-            class="absolute left-1/2 top-[14px] h-[132px] w-[146px] -translate-x-1/2 object-contain md:h-[152px] md:w-[168px]"
-            src="${imageUrl}"
-            alt="${boisson.nom_boisson}"
-            loading="lazy"
-          />
+          <a
+  href="/boissons/${boisson.slug}"
+  class="absolute left-1/2 top-[14px] block h-[132px] w-[146px] -translate-x-1/2 md:h-[152px] md:w-[168px]"
+  aria-label="Voir la recette ${boisson.nom_boisson}"
+>
+  <img
+    class="h-full w-full object-contain"
+    src="${imageUrl}"
+    alt="${boisson.nom_boisson}"
+    loading="lazy"
+  />
+</a>
         </div>
 
         <div class="flex flex-1 flex-col bg-white px-[15px] pb-4 pt-[13px] md:px-[18px] md:pb-5 md:pt-4">
